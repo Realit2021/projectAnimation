@@ -5,16 +5,22 @@
         x: 0,
         y: 0,
         cursorStyle: 'move',
+        actionName: 'pivot',
 
         actionHandler: function(eventData, transform, x, y) {
             const obj = transform.target;
             const pointer = canvas.getPointer(eventData);
 
+            // Получаем текущую матрицу трансформации объекта
+            const matrix = obj.calcTransformMatrix();
+            
+            // Преобразуем точку из координат канваса в локальные координаты объекта
             const localPoint = fabric.util.transformPoint(
                 { x: pointer.x, y: pointer.y },
-                fabric.util.invertTransform(obj.calcTransformMatrix())
+                fabric.util.invertTransform(matrix)
             );
 
+            // Вычисляем новые координаты pivot в нормализованной системе (0-1)
             const newPivotX = (localPoint.x / obj.width) + 0.5;
             const newPivotY = (localPoint.y / obj.height) + 0.5;
 
@@ -32,23 +38,15 @@
             const px = fabricObject.pivotX !== undefined ? fabricObject.pivotX : 0.5;
             const py = fabricObject.pivotY !== undefined ? fabricObject.pivotY : 0.5;
 
+            // Вычисляем смещение pivot относительно центра объекта в локальных координатах
             const offsetX = (px - 0.5) * fabricObject.width;
             const offsetY = (py - 0.5) * fabricObject.height;
 
-            const objCanvas = fabricObject.canvas || canvas;
-            if (!objCanvas || !objCanvas.viewportTransform) {
-                return fabric.util.transformPoint(
-                    { x: offsetX, y: offsetY },
-                    fabricObject.calcTransformMatrix()
-                );
-            }
-
+            // Преобразуем локальную точку pivot в глобальные координаты канваса
+            const matrix = fabricObject.calcTransformMatrix();
             return fabric.util.transformPoint(
                 { x: offsetX, y: offsetY },
-                fabric.util.multiplyTransformMatrices(
-                    objCanvas.viewportTransform,
-                    fabricObject.calcTransformMatrix()
-                )
+                matrix
             );
         },
 
@@ -94,76 +92,11 @@ function resetPivotToCenter() {
 }
 
 function initPivotEvents() {
-    let isRotatingWithCustomPivot = false;
-    let initialPivotCanvasPoint = { x: 0, y: 0 };
-    let initialObjLeft = 0;
-    let initialObjTop = 0;
-    let initialAngle = 0;
-
-    canvas.on('mouse:down', (e) => {
-        if (e.target && e.transform && e.transform.action === 'rotate') {
-            const obj = e.target;
-            const px = obj.pivotX !== undefined ? obj.pivotX : 0.5;
-            const py = obj.pivotY !== undefined ? obj.pivotY : 0.5;
-
-            // Если pivot смещен от центра, включаем компенсацию
-            if (px !== 0.5 || py !== 0.5) {
-                isRotatingWithCustomPivot = true;
-                initialObjLeft = obj.left;
-                initialObjTop = obj.top;
-                initialAngle = obj.angle;
-
-                // Вычисляем позицию pivot точки на канвасе
-                const centerX = obj.left + obj.width / 2;
-                const centerY = obj.top + obj.height / 2;
-                const localPivotX = (px - 0.5) * obj.width;
-                const localPivotY = (py - 0.5) * obj.height;
-
-                const angleRad = obj.angle * Math.PI / 180;
-                const cos = Math.cos(angleRad);
-                const sin = Math.sin(angleRad);
-                const rotatedPivotX = localPivotX * cos - localPivotY * sin;
-                const rotatedPivotY = localPivotX * sin + localPivotY * cos;
-
-                initialPivotCanvasPoint = {
-                    x: centerX + rotatedPivotX,
-                    y: centerY + rotatedPivotY
-                };
-            }
-        }
-    });
-
-    canvas.on('object:rotating', (e) => {
-        if (!isRotatingWithCustomPivot) return;
-        const obj = e.target;
-
-        const px = obj.pivotX !== undefined ? obj.pivotX : 0.5;
-        const py = obj.pivotY !== undefined ? obj.pivotY : 0.5;
-
-        const localPivotX = (px - 0.5) * obj.width;
-        const localPivotY = (py - 0.5) * obj.height;
-
-        const angleRad = obj.angle * Math.PI / 180;
-        const cos = Math.cos(angleRad);
-        const sin = Math.sin(angleRad);
-        const rotatedPivotX = localPivotX * cos - localPivotY * sin;
-        const rotatedPivotY = localPivotX * sin + localPivotY * cos;
-
-        // Новая позиция центра объекта
-        const newCenterX = initialPivotCanvasPoint.x - rotatedPivotX;
-        const newCenterY = initialPivotCanvasPoint.y - rotatedPivotY;
-
-        // Устанавливаем новую позицию объекта так, чтобы pivot оставался на месте
-        obj.left = newCenterX - obj.width / 2;
-        obj.top = newCenterY - obj.height / 2;
-
-        obj.setCoords();
-    });
-
+    // Вращение теперь работает корректно благодаря правильной реализации positionHandler
+    // и использованию встроенного механизма Fabric.js controlsUtils.rotateWithPoint
+    // Дополнительная компенсация в object:rotating больше не нужна
+    
     canvas.on('mouse:up', () => {
-        if (isRotatingWithCustomPivot) {
-            isRotatingWithCustomPivot = false;
-            saveState();
-        }
+        saveState();
     });
 }
