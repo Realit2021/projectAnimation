@@ -76,6 +76,15 @@ break;
             break;
         case 'toggle-grid': document.getElementById('btn-grid').click(); break;
         case 'toggle-snap': document.getElementById('btn-snap').click(); break;
+        case 'toggle-inspector': 
+            const inspector = document.getElementById('inspector');
+            inspector.classList.toggle('hidden');
+            canvas.calcOffset();
+            break;
+        case 'toggle-tracks':
+            const trackLabels = document.getElementById('track-labels');
+            trackLabels.classList.toggle('hidden');
+            break;
         case 'project-settings': openProjectSettings(); break;
         case 'add-keyframe': addKeyframe(); break;
         case 'toggle-visibility': toggleActiveVisibility(); break;

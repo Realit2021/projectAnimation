@@ -1,1 +1,3 @@
-Nothing should be ignored since the changes only include source files (.css, .html, .js) and no build artifacts, dependencies, or temporary files.
+```gitignore
+
+```

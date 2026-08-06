@@ -48,21 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
         updateGridOverlay();
     };
 
-    // ===== 4b. СКРЫТЬ/ПОКАЗАТЬ ИНСПЕКТОР И СПИСОК ОБЪЕКТОВ =====
-    document.getElementById('btn-toggle-inspector').onclick = () => {
-        const inspector = document.getElementById('inspector');
-        const btn = document.getElementById('btn-toggle-inspector');
-        inspector.classList.toggle('hidden');
-        btn.classList.toggle('active', !inspector.classList.contains('hidden'));
-        canvas.calcOffset();
-    };
-
-    document.getElementById('btn-toggle-tracks').onclick = () => {
-        const trackLabels = document.getElementById('track-labels');
-        const btn = document.getElementById('btn-toggle-tracks');
-        trackLabels.classList.toggle('hidden');
-        btn.classList.toggle('active', !trackLabels.classList.contains('hidden'));
-    };
+    // ===== 4b. СКРЫТЬ/ПОКАЗАТЬ ИНСПЕКТОР И СПИСОК ОБЪЕКТОВ (через меню Вид) =====
+    // Кнопки удалены из toolbar, теперь управление только через меню
 
     // ===== 5. ДЛИТЕЛЬНОСТЬ И ШАГ =====
     document.getElementById('inp-duration').addEventListener('change', () => {

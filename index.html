@@ -109,6 +109,15 @@
                     <span class="entry-shortcut">L</span>
                 </div>
                 <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="toggle-inspector">
+                    <span class="entry-icon">📋</span>
+                    <span class="entry-label">Инспектор</span>
+                </div>
+                <div class="menu-entry" data-action="toggle-tracks">
+                    <span class="entry-icon">🎬</span>
+                    <span class="entry-label">Список объектов</span>
+                </div>
+                <div class="menu-separator"></div>
                 <div class="menu-entry" data-action="project-settings">
                     <span class="entry-icon">⚙️</span>
                     <span class="entry-label">Настройки проекта...</span>
@@ -194,11 +203,6 @@
             <label>Шаг:
                 <input type="number" id="inp-grid-size" value="25" min="5" max="200" step="5"> px
             </label>
-        </div>
-        <div class="toolbar-sep"></div>
-        <div class="toolbar-group">
-            <button id="btn-toggle-inspector" class="toggle" title="Показать/скрыть инспектор">📋 Инспектор</button>
-            <button id="btn-toggle-tracks" class="toggle" title="Показать/скрыть список объектов">🎬 Объекты</button>
         </div>
         <div class="toolbar-sep"></div>
         <span id="kf-status">—</span>
