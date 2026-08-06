@@ -65,6 +65,22 @@ button:disabled:hover {
 }
 
 /* Workspace */
+/* Фон за пределами холста (шахматный паттерн) */
+.workspace-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: 
+        linear-gradient(45deg, #2a2a2a 25%, transparent 25%),
+        linear-gradient(-45deg, #2a2a2a 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #2a2a2a 75%),
+        linear-gradient(-45deg, transparent 75%, #2a2a2a 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    z-index: 0;
+    pointer-events: none;
+}
+
 #workspace {
     flex: 1;
     display: flex;
@@ -75,9 +91,18 @@ button:disabled:hover {
     position: relative;
     min-width: 200px;
 }
+#workspace > .workspace-bg {
+    z-index: 0;
+}
 .canvas-container {
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
     position: relative;
+    overflow: visible !important;
+    z-index: 1;
+}
+.canvas-container canvas {
+    position: relative;
+    z-index: 10;
 }
 #grid-overlay {
     position: absolute;

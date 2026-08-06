@@ -10,9 +10,16 @@ const MAX_ZOOM = 3;
 function initCanvas() {
     canvas = new fabric.Canvas('c', {
         backgroundColor: '#ffffff',
-        preserveObjectStacking: true
+        preserveObjectStacking: true,
+        selection: true
     });
 
+    // Отключаем ограничение объектов рамками холста - теперь объекты за пределами холста видны и доступны для редактирования
+    canvas.clipPath = undefined;
+    
+    // Разрешаем объектам выходить за пределы холста
+    canvas.selection = true;
+    
     const canvasContainer = document.querySelector('.canvas-container');
     gridOverlay = document.createElement('div');
     gridOverlay.id = 'grid-overlay';
@@ -25,9 +32,17 @@ function setZoom(zoom) {
     
     const workspace = document.getElementById('workspace');
     const canvasEl = document.getElementById('c');
+    const canvasContainer = document.querySelector('.canvas-container');
     
+    // Устанавливаем масштаб для canvas
     canvasEl.style.transform = `scale(${currentZoom})`;
     canvasEl.style.transformOrigin = 'center center';
+    
+    // Обновляем размеры контейнера с учётом масштаба для отображения объектов за пределами холста
+    const scaledWidth = canvas.getWidth() * currentZoom;
+    const scaledHeight = canvas.getHeight() * currentZoom;
+    canvasContainer.style.width = scaledWidth + 'px';
+    canvasContainer.style.height = scaledHeight + 'px';
     
     // Обновляем текст кнопки сброса
     const resetBtn = document.getElementById('btn-zoom-reset');
