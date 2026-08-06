@@ -38,6 +38,7 @@ function initCanvas() {
             lastPanX = e.e.clientX;
             lastPanY = e.e.clientY;
             canvas.defaultCursor = 'grabbing';
+            canvas.selection = false; // Отключаем выделение при панорамировании
             e.e.preventDefault();
         }
     });
@@ -51,22 +52,23 @@ function initCanvas() {
         lastPanX = e.e.clientX;
         lastPanY = e.e.clientY;
         
-        // Перемещаем все объекты в противоположном направлении
-        canvas.getObjects().forEach(obj => {
-            obj.set({
-                left: obj.left + deltaX / currentZoom,
-                top: obj.top + deltaY / currentZoom
-            });
-            obj.setCoords();
-        });
-        
+        // Используем viewportTransform для панорамирования камеры
+        const zoom = canvas.getZoom();
+        const vpt = canvas.viewportTransform;
+        vpt[4] += deltaX / zoom;
+        vpt[5] += deltaY / zoom;
+        canvas.setViewportTransform(vpt);
         canvas.renderAll();
+        
+        // Обновляем позицию сетки при панорамировании
+        updateGridOverlay();
     });
 
     canvas.on('mouse:up', (e) => {
         if (e.e.button === 1) {
             isPanning = false;
             canvas.defaultCursor = 'default';
+            canvas.selection = true; // Включаем выделение обратно
         }
     });
 
@@ -75,6 +77,7 @@ function initCanvas() {
         if (isPanning) {
             isPanning = false;
             canvas.defaultCursor = 'default';
+            canvas.selection = true;
         }
     });
 }
@@ -83,19 +86,8 @@ function initCanvas() {
 function setZoom(zoom) {
     currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
     
-    const workspace = document.getElementById('workspace');
-    const canvasEl = document.getElementById('c');
-    const canvasContainer = document.querySelector('.canvas-container');
-    
-    // Устанавливаем масштаб для canvas
-    canvasEl.style.transform = `scale(${currentZoom})`;
-    canvasEl.style.transformOrigin = 'center center';
-    
-    // Обновляем размеры контейнера с учётом масштаба для отображения объектов за пределами холста
-    const scaledWidth = canvas.getWidth() * currentZoom;
-    const scaledHeight = canvas.getHeight() * currentZoom;
-    canvasContainer.style.width = scaledWidth + 'px';
-    canvasContainer.style.height = scaledHeight + 'px';
+    // Устанавливаем масштаб через viewportTransform для правильной работы с камерой
+    canvas.setZoom(currentZoom);
     
     // Обновляем текст кнопки сброса
     const resetBtn = document.getElementById('btn-zoom-reset');
@@ -103,10 +95,8 @@ function setZoom(zoom) {
         resetBtn.textContent = Math.round(currentZoom * 100) + '%';
     }
     
-    // Пересчитываем offset для корректной работы мыши
-    setTimeout(() => {
-        canvas.calcOffset();
-    }, 10);
+    // Обновляем сетку при изменении масштаба
+    updateGridOverlay();
 }
 
 // Увеличить масштаб
@@ -125,6 +115,8 @@ function zoomReset() {
 }
 
 function updateGridOverlay() {
+    if (!gridOverlay) return;
+    
     if (!gridEnabled) {
         gridOverlay.classList.remove('show');
         return;
@@ -134,9 +126,20 @@ function updateGridOverlay() {
     const h = canvas.getHeight();
     gridOverlay.style.width = w + 'px';
     gridOverlay.style.height = h + 'px';
+    
+    // Учитываем масштаб для сетки
+    const scaledGridSize = gridSize * canvas.getZoom();
+    
     gridOverlay.style.backgroundImage = `
         linear-gradient(to right, rgba(100, 150, 255, 0.3) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(100, 150, 255, 0.3) 1px, transparent 1px)
     `;
-    gridOverlay.style.backgroundSize = `${gridSize}px ${gridSize}px`;
+    gridOverlay.style.backgroundSize = `${scaledGridSize}px ${scaledGridSize}px`;
+    
+    // Обновляем позицию сетки с учётом панорамирования
+    const vpt = canvas.viewportTransform;
+    if (vpt) {
+        gridOverlay.style.transform = `translate(${vpt[4]}px, ${vpt[5]}px)`;
+        gridOverlay.style.transformOrigin = 'top left';
+    }
 }

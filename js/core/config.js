@@ -9,4 +9,9 @@ const DEFAULT_DURATION = 5;
 const DEFAULT_TIME_STEP = 0.05;
 const DEFAULT_GRID_SIZE = 25;
 
+// Глобальные переменные для сетки
+let gridEnabled = false;
+let gridSize = DEFAULT_GRID_SIZE;
+let snapEnabled = false;
+
 const TRACK_COLORS = ['#4a9eff','#ff6b9d','#50c878','#ffb347','#b19cd9','#77dd77','#ff6961'];
