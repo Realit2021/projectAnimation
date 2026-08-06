@@ -96,6 +96,9 @@ function resetPivotToCenter() {
 function initPivotEvents() {
     let isRotatingWithCustomPivot = false;
     let initialPivotCanvasPoint = { x: 0, y: 0 };
+    let initialObjLeft = 0;
+    let initialObjTop = 0;
+    let initialAngle = 0;
 
     canvas.on('mouse:down', (e) => {
         if (e.target && e.transform && e.transform.action === 'rotate') {
@@ -106,7 +109,11 @@ function initPivotEvents() {
             // Если pivot смещен от центра, включаем компенсацию
             if (px !== 0.5 || py !== 0.5) {
                 isRotatingWithCustomPivot = true;
+                initialObjLeft = obj.left;
+                initialObjTop = obj.top;
+                initialAngle = obj.angle;
 
+                // Вычисляем позицию pivot точки на канвасе
                 const centerX = obj.left + obj.width / 2;
                 const centerY = obj.top + obj.height / 2;
                 const localPivotX = (px - 0.5) * obj.width;
@@ -133,8 +140,6 @@ function initPivotEvents() {
         const px = obj.pivotX !== undefined ? obj.pivotX : 0.5;
         const py = obj.pivotY !== undefined ? obj.pivotY : 0.5;
 
-        const centerX = obj.left + obj.width / 2;
-        const centerY = obj.top + obj.height / 2;
         const localPivotX = (px - 0.5) * obj.width;
         const localPivotY = (py - 0.5) * obj.height;
 
@@ -144,14 +149,13 @@ function initPivotEvents() {
         const rotatedPivotX = localPivotX * cos - localPivotY * sin;
         const rotatedPivotY = localPivotX * sin + localPivotY * cos;
 
-        const currentPivotX = centerX + rotatedPivotX;
-        const currentPivotY = centerY + rotatedPivotY;
+        // Новая позиция центра объекта
+        const newCenterX = initialPivotCanvasPoint.x - rotatedPivotX;
+        const newCenterY = initialPivotCanvasPoint.y - rotatedPivotY;
 
-        const offsetX = initialPivotCanvasPoint.x - currentPivotX;
-        const offsetY = initialPivotCanvasPoint.y - currentPivotY;
-
-        obj.left += offsetX;
-        obj.top += offsetY;
+        // Устанавливаем новую позицию объекта так, чтобы pivot оставался на месте
+        obj.left = newCenterX - obj.width / 2;
+        obj.top = newCenterY - obj.height / 2;
 
         obj.setCoords();
     });
