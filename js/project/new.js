@@ -3,10 +3,6 @@ let projectName = 'Без названия';
 let DURATION = DEFAULT_DURATION;
 let TIME_STEP = DEFAULT_TIME_STEP;
 
-let gridEnabled = false;
-let snapEnabled = false;
-let gridSize = DEFAULT_GRID_SIZE;
-
 function openNewProjectDialog() {
   document.getElementById('np-name').value = projectName;
   document.getElementById('np-width').value = canvas.getWidth();
