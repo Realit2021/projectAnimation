@@ -1,0 +1,505 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal Animation Studio</title>
+
+    <!-- ===== CDN ЗАВИСИМОСТИ ===== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+
+    <!-- ===== CSS ===== -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/menubar.css">
+    <link rel="stylesheet" href="css/inspector.css">
+    <link rel="stylesheet" href="css/timeline.css">
+    <link rel="stylesheet" href="css/modals.css">
+</head>
+<body>
+
+    <!-- ================= МЕНЮ-БАР ================= -->
+    <div id="menubar">
+        <div class="menu-item" data-menu="file">
+            Файл
+            <div class="menu-dropdown">
+                <div class="menu-entry" data-action="new-project">
+                    <span class="entry-icon">📄</span>
+                    <span class="entry-label">Новый проект...</span>
+                    <span class="entry-shortcut">Ctrl+N</span>
+                </div>
+                <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="open-project">
+                    <span class="entry-icon">📂</span>
+                    <span class="entry-label">Открыть проект...</span>
+                    <span class="entry-shortcut">Ctrl+O</span>
+                </div>
+                <div class="menu-entry" data-action="save-project">
+                    <span class="entry-icon">💾</span>
+                    <span class="entry-label">Сохранить проект</span>
+                    <span class="entry-shortcut">Ctrl+S</span>
+                </div>
+                <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="add-image">
+                    <span class="entry-icon">🖼️</span>
+                    <span class="entry-label">Добавить изображение...</span>
+                    <span class="entry-shortcut">Ctrl+I</span>
+                </div>
+                <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="export">
+                    <span class="entry-icon">🎬</span>
+                    <span class="entry-label">Экспорт видео/GIF...</span>
+                    <span class="entry-shortcut">Ctrl+E</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-item" data-menu="edit">
+            Правка
+            <div class="menu-dropdown">
+                <div class="menu-entry" data-action="undo">
+                    <span class="entry-icon">↶</span>
+                    <span class="entry-label">Отменить</span>
+                    <span class="entry-shortcut">Ctrl+Z</span>
+                </div>
+                <div class="menu-entry" data-action="redo">
+                    <span class="entry-icon">↷</span>
+                    <span class="entry-label">Вернуть</span>
+                    <span class="entry-shortcut">Ctrl+Y</span>
+                </div>
+                <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="duplicate">
+                    <span class="entry-icon">📋</span>
+                    <span class="entry-label">Дублировать объект</span>
+                    <span class="entry-shortcut">Ctrl+D</span>
+                </div>
+                <div class="menu-entry" data-action="delete-object">
+                    <span class="entry-icon">🗑️</span>
+                    <span class="entry-label">Удалить объект</span>
+                    <span class="entry-shortcut">Del</span>
+                </div>
+                <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="delete-keyframe">
+                    <span class="entry-icon">◆</span>
+                    <span class="entry-label">Удалить ключевой кадр</span>
+                    <span class="entry-shortcut">Del</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-item" data-menu="view">
+            Вид
+            <div class="menu-dropdown">
+                <div class="menu-entry" data-action="toggle-grid">
+                    <span class="entry-icon">⊞</span>
+                    <span class="entry-label">Показать сетку</span>
+                    <span class="entry-shortcut">G</span>
+                </div>
+                <div class="menu-entry" data-action="toggle-snap">
+                    <span class="entry-icon">🧲</span>
+                    <span class="entry-label">Режим магнита</span>
+                    <span class="entry-shortcut">S</span>
+                </div>
+                <div class="menu-entry" data-action="toggle-parenting-links">
+                    <span class="entry-icon">🔗</span>
+                    <span class="entry-label">Показать привязки</span>
+                    <span class="entry-shortcut">L</span>
+                </div>
+                <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="project-settings">
+                    <span class="entry-icon">⚙️</span>
+                    <span class="entry-label">Настройки проекта...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-item" data-menu="object">
+            Объект
+            <div class="menu-dropdown">
+                <div class="menu-entry" data-action="add-keyframe">
+                    <span class="entry-icon">◆</span>
+                    <span class="entry-label">Записать ключевой кадр</span>
+                    <span class="entry-shortcut">F6</span>
+                </div>
+                <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="toggle-visibility">
+                    <span class="entry-icon">👁</span>
+                    <span class="entry-label">Переключить видимость</span>
+                    <span class="entry-shortcut">H</span>
+                </div>
+                <div class="menu-entry" data-action="set-parent">
+                    <span class="entry-icon">🔗</span>
+                    <span class="entry-label">Привязать к объекту...</span>
+                    <span class="entry-shortcut">Ctrl+P</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-item" data-menu="playback">
+            Воспроизведение
+            <div class="menu-dropdown">
+                <div class="menu-entry" data-action="play-pause">
+                    <span class="entry-icon">▶</span>
+                    <span class="entry-label">Play / Pause</span>
+                    <span class="entry-shortcut">Space</span>
+                </div>
+                <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="go-start">
+                    <span class="entry-icon">⏮</span>
+                    <span class="entry-label">В начало</span>
+                    <span class="entry-shortcut">Home</span>
+                </div>
+                <div class="menu-entry" data-action="go-end">
+                    <span class="entry-icon">⏭</span>
+                    <span class="entry-label">В конец</span>
+                    <span class="entry-shortcut">End</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-item" data-menu="help">
+            Помощь
+            <div class="menu-dropdown">
+                <div class="menu-entry" data-action="show-shortcuts">
+                    <span class="entry-icon">⌨️</span>
+                    <span class="entry-label">Горячие клавиши</span>
+                </div>
+                <div class="menu-entry" data-action="about">
+                    <span class="entry-icon">ℹ️</span>
+                    <span class="entry-label">О программе</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= ПАНЕЛЬ ИНСТРУМЕНТОВ ================= -->
+    <div id="toolbar">
+        <div class="toolbar-group">
+            <button id="btn-undo" class="toggle" title="Отменить (Ctrl+Z)" disabled>↶ Отменить</button>
+            <button id="btn-redo" class="toggle" title="Вернуть (Ctrl+Y)" disabled>↷ Вернуть</button>
+        </div>
+        <div class="toolbar-sep"></div>
+        <div class="toolbar-group">
+            <button id="btn-grid" class="toggle" title="Показать сетку (G)">⊞ Сетка</button>
+            <button id="btn-snap" class="toggle" title="Магнит (S)">🧲 Магнит</button>
+            <label>Шаг:
+                <input type="number" id="inp-grid-size" value="25" min="5" max="200" step="5"> px
+            </label>
+        </div>
+        <div class="toolbar-sep"></div>
+        <span id="kf-status">—</span>
+        <span style="margin-left:auto; font-size:11px; color:var(--text-dim);" id="project-name">Без названия</span>
+    </div>
+
+    <!-- ================= ОСНОВНАЯ РАСКЛАДКА ================= -->
+    <div id="main">
+        <div id="workspace">
+            <canvas id="c" width="800" height="500"></canvas>
+        </div>
+        <div class="resize-handle-v" id="resize-inspector"></div>
+        <div id="inspector">
+            <div id="inspector-header">Инспектор</div>
+            <div id="inspector-content">
+                <div id="no-selection">Объект не выбран<br><br>Добавьте изображение или выделите объект на холсте</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="resize-handle-h" id="resize-timeline"></div>
+
+    <!-- ================= TIMELINE ================= -->
+    <div id="timeline">
+        <div id="timeline-toolbar">
+            <div class="playback-controls">
+                <button class="nav-btn" id="btn-go-start" title="В начало (Home)">⏮</button>
+                <button class="play-btn primary" id="btn-play" title="Play/Pause (Space)">▶</button>
+                <button class="nav-btn" id="btn-go-end" title="В конец (End)">⏭</button>
+                <span id="time-display" style="font-size:11px;color:var(--text-dim);padding:4px 8px;background:#1a1a1a;border-radius:3px;border:1px solid #444;">0.00s</span>
+            </div>
+            <!-- НОВАЯ КНОПКА: Динамический ключевой кадр -->
+            <button id="btn-timeline-kf" class="primary" style="margin-left: 8px;">◆ Добавить кадр</button>
+
+            <div class="toolbar-sep"></div>
+
+            <label>Длительность:
+                <input type="number" id="inp-duration" value="5" min="1" max="120" step="1"> сек
+            </label>
+            <label>Шаг ползунка:
+                <input type="number" id="inp-step" value="0.05" min="0.01" max="1" step="0.01"> сек
+            </label>
+            <span style="margin-left:auto;" id="timeline-info"></span>
+        </div>
+        <div id="timeline-body">
+            <div id="track-labels">
+                <div id="track-labels-header">Объекты</div>
+                <div id="track-labels-list"></div>
+            </div>
+            <div id="timeline-scroll">
+                <div id="timeline-content">
+                    <div id="time-ruler"></div>
+                    <div id="tracks-area"></div>
+                    <div id="playhead" style="left: 0;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= EASING POPUP ================= -->
+    <div id="easing-popup">
+        <div id="easing-popup-header">Выберите тип перехода</div>
+        <svg id="easing-popup-graph" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path id="popup-graph-path" fill="none" stroke="#007acc" stroke-width="3" vector-effect="non-scaling-stroke"/>
+        </svg>
+        <div id="easing-list"></div>
+    </div>
+
+    <!-- ================= МОДАЛКА: НОВЫЙ ПРОЕКТ ================= -->
+    <div class="modal-overlay" id="modal-new-project">
+        <div class="modal-content">
+            <h3>Новый проект</h3>
+            <div class="form-group">
+                <label>Название проекта</label>
+                <input type="text" id="np-name" value="Без названия">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Ширина холста (px)</label>
+                    <input type="number" id="np-width" value="800" min="100" max="3840" step="10">
+                </div>
+                <div class="form-group">
+                    <label>Высота холста (px)</label>
+                    <input type="number" id="np-height" value="500" min="100" max="2160" step="10">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Длительность (сек)</label>
+                <input type="number" id="np-duration" value="5" min="1" max="120" step="1">
+            </div>
+            <div class="form-group">
+                <label>Фон</label>
+                <div class="bg-mode-tabs">
+                    <div class="bg-mode-tab active" data-mode="color">Цвет</div>
+                    <div class="bg-mode-tab" data-mode="image">Изображение</div>
+                    <div class="bg-mode-tab" data-mode="transparent">Прозрачный</div>
+                    <div class="bg-mode-tab" data-mode="video">Видео</div>
+                </div>
+                <div class="bg-mode-panel active" data-panel="color">
+                    <input type="color" id="np-bg-color" value="#ffffff">
+                </div>
+                <div class="bg-mode-panel" data-panel="image">
+                    <div class="file-drop" id="np-bg-drop">
+                        📁 Кликните или перетащите изображение
+                    </div>
+                    <input type="file" id="np-bg-file" accept="image/*" style="display:none;">
+                </div>
+                <div class="bg-mode-panel" data-panel="transparent">
+                    <div style="padding:10px; color:var(--text-dim); font-size:12px; text-align:center;">
+                        Фон будет прозрачным (для экспорта в GIF/WebM с альфа-каналом)
+                    </div>
+                </div>
+                <div class="bg-mode-panel" data-panel="video">
+                  <div class="file-drop" id="np-bg-video-drop">
+                    📁 Кликните или перетащите видео
+                  </div>
+                  <input type="file" id="np-bg-video-file" accept="video/*" style="display:none;">
+                  <label class="video-loop-label">
+                    <input type="checkbox" id="np-bg-video-loop" checked>
+                    Зациклить видео
+                  </label>
+                </div>
+            </div>
+            <div class="buttons">
+                <button onclick="closeModal('modal-new-project')">Отмена</button>
+                <button class="primary" id="btn-create-project">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= МОДАЛКА: НАСТРОЙКИ ПРОЕКТА ================= -->
+    <div class="modal-overlay" id="modal-project-settings">
+        <div class="modal-content">
+            <h3>Настройки проекта</h3>
+            <div class="form-group">
+                <label>Название</label>
+                <input type="text" id="ps-name">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Ширина (px)</label>
+                    <input type="number" id="ps-width" min="100" max="3840" step="10">
+                </div>
+                <div class="form-group">
+                    <label>Высота (px)</label>
+                    <input type="number" id="ps-height" min="100" max="2160" step="10">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Фон</label>
+                <div class="bg-mode-tabs">
+                    <div class="bg-mode-tab active" data-mode="color">Цвет</div>
+                    <div class="bg-mode-tab" data-mode="image">Изображение</div>
+                    <div class="bg-mode-tab" data-mode="transparent">Прозрачный</div>
+                    <div class="bg-mode-tab" data-mode="video">Видео</div>
+                </div>
+                <div class="bg-mode-panel active" data-panel="color">
+                    <input type="color" id="ps-bg-color" value="#ffffff">
+                </div>
+                <div class="bg-mode-panel" data-panel="image">
+                    <div class="file-drop" id="ps-bg-drop">
+                        📁 Кликните или перетащите изображение
+                    </div>
+                    <input type="file" id="ps-bg-file" accept="image/*" style="display:none;">
+                </div>
+                <div class="bg-mode-panel" data-panel="transparent">
+                    <div style="padding:10px; color:var(--text-dim); font-size:12px; text-align:center;">
+                        Прозрачный фон
+                    </div>
+                </div>
+                <div class="bg-mode-panel" data-panel="video">
+                <div class="file-drop" id="ps-bg-video-drop">
+                  📁 Кликните или перетащите видео
+                </div>
+                <input type="file" id="ps-bg-video-file" accept="video/*" style="display:none;">
+                <label class="video-loop-label">
+                  <input type="checkbox" id="ps-bg-video-loop" checked>
+                  Зациклить видео
+                </label>
+              </div>
+            </div>
+            <div class="buttons">
+                <button onclick="closeModal('modal-project-settings')">Отмена</button>
+                <button class="primary" id="btn-apply-settings">Применить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= МОДАЛКА: ЭКСПОРТ ================= -->
+    <div class="modal-overlay" id="modal-export">
+        <div class="modal-content">
+            <h3>Экспорт анимации</h3>
+            <div class="form-group">
+                <label>Формат</label>
+                <select id="export-format">
+                    <option value="gif">GIF (анимация)</option>
+                    <option value="mp4">MP4 (видео)</option>
+                    <option value="webm">WebM (видео)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>FPS (кадров в секунду)</label>
+                <select id="export-fps">
+                    <option value="12">12 FPS</option>
+                    <option value="15">15 FPS</option>
+                    <option value="24" selected>24 FPS</option>
+                    <option value="30">30 FPS</option>
+                    <option value="60">60 FPS</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Качество (1-100)</label>
+                <input type="number" id="export-quality" value="10" min="1" max="100" step="1">
+            </div>
+            <div class="form-group">
+                <label>Размер (ширина, px)</label>
+                <input type="number" id="export-width" value="800" min="100" max="1920" step="100">
+            </div>
+            <div class="progress-bar" id="export-progress">
+                <div class="fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-text" id="progress-text"></div>
+            <div class="buttons">
+                <button onclick="closeModal('modal-export')">Отмена</button>
+                <button class="primary" id="btn-start-export">Экспортировать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= МОДАЛКА: ГОРЯЧИЕ КЛАВИШИ ================= -->
+    <div class="modal-overlay" id="modal-shortcuts">
+        <div class="modal-content">
+            <h3>Горячие клавиши</h3>
+            <div style="font-size:12px; line-height:1.8;">
+                <div><b>Ctrl+N</b> — Новый проект</div>
+                <div><b>Ctrl+O</b> — Открыть проект</div>
+                <div><b>Ctrl+S</b> — Сохранить проект</div>
+                <div><b>Ctrl+E</b> — Экспорт</div>
+                <div><b>Ctrl+I</b> — Добавить изображение</div>
+                <div><b>Ctrl+D</b> — Дублировать объект</div>
+                <div style="height:8px;"></div>
+                <div><b>Space</b> — Play / Pause</div>
+                <div><b>Home</b> — В начало</div>
+                <div><b>End</b> — В конец</div>
+                <div><b>F6</b> — Записать ключевой кадр</div>
+                <div style="height:8px;"></div>
+                <div><b>H</b> — Переключить видимость</div>
+                <div><b>G</b> — Сетка вкл/выкл</div>
+                <div><b>S</b> — Магнит вкл/выкл</div>
+                <div><b>Delete</b> — Удалить выделенный кадр/объект</div>
+            </div>
+            <div class="buttons">
+                <button class="primary" onclick="closeModal('modal-shortcuts')">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= МОДАЛКА: О ПРОГРАММЕ ================= -->
+    <div class="modal-overlay" id="modal-about">
+        <div class="modal-content">
+            <h3>Minimal Animation Studio</h3>
+            <div style="font-size:12px; line-height:1.6; color:var(--text-dim);">
+                <p>Веб-редактор для создания анимированных баннеров и мультиков.</p>
+                <p>Версия: 1.0</p>
+                <p>Дата: 31 июля 2026</p>
+                <p style="margin-top:10px;">Создано с использованием:<br>Fabric.js, JSZip, FileSaver.js, gif.js</p>
+            </div>
+            <div class="buttons">
+                <button class="primary" onclick="closeModal('modal-about')">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= СКРЫТЫЕ INPUT ================= -->
+    <input type="file" id="load-input" accept=".zip" style="display: none;">
+    <input type="file" id="file-input" accept="image/*" style="display: none;">
+
+    <!-- ================= ТОСТЫ ================= -->
+    <div id="toast-container"></div>
+
+    <!-- ===== JS МОДУЛИ (порядок важен!) ===== -->
+    <script src="js/core/config.js"></script>
+    <script src="js/core/utils.js"></script>
+    <script src="js/core/canvas.js"></script>
+
+    <script src="js/animation/easing.js"></script>
+    <script src="js/animation/keyframes.js"></script>
+    <script src="js/animation/interpolation.js"></script>
+    <script src="js/animation/playback.js"></script>
+
+    <script src="js/objects/manager.js"></script>
+    <script src="js/objects/visibility.js"></script>
+    <script src="js/objects/background.js"></script>
+
+    <script src="js/ui/menubar.js"></script>
+    <script src="js/ui/modals.js"></script>
+    <script src="js/ui/inspector.js"></script>
+    <script src="js/ui/timeline.js"></script>
+
+    <script src="js/export/gif.js"></script>
+    <script src="js/export/video.js"></script>
+
+    <script src="js/project/new.js"></script>
+    <script src="js/project/save.js"></script>
+    <script src="js/project/load.js"></script>
+
+    <script src="js/core/history.js"></script>
+    <script src="js/objects/pivot.js"></script>
+    <script src="js/objects/layers.js"></script>
+    <script src="js/objects/parenting.js"></script>
+
+
+    <script src="js/main.js"></script>
+</body>
+</html>

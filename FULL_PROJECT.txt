@@ -1,0 +1,3966 @@
+
+
+======================================================================
+FILE: ./index.html
+======================================================================
+
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal Animation Studio</title>
+
+    <!-- ===== CDN ЗАВИСИМОСТИ ===== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+
+    <!-- ===== CSS ===== -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/menubar.css">
+    <link rel="stylesheet" href="css/inspector.css">
+    <link rel="stylesheet" href="css/timeline.css">
+    <link rel="stylesheet" href="css/modals.css">
+</head>
+<body>
+
+    <!-- ================= МЕНЮ-БАР ================= -->
+    <div id="menubar">
+        <div class="menu-item" data-menu="file">
+            Файл
+            <div class="menu-dropdown">
+                <div class="menu-entry" data-action="new-project">
+                    <span class="entry-icon">📄</span>
+                    <span class="entry-label">Новый проект...</span>
+                    <span class="entry-shortcut">Ctrl+N</span>
+                </div>
+                <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="open-project">
+                    <span class="entry-icon">📂</span>
+                    <span class="entry-label">Открыть проект...</span>
+                    <span class="entry-shortcut">Ctrl+O</span>
+                </div>
+                <div class="menu-entry" data-action="save-project">
+                    <span class="entry-icon">💾</span>
+                    <span class="entry-label">Сохранить проект</span>
+                    <span class="entry-shortcut">Ctrl+S</span>
+                </div>
+                <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="add-image">
+                    <span class="entry-icon">🖼️</span>
+                    <span class="entry-label">Добавить изображение...</span>
+                    <span class="entry-shortcut">Ctrl+I</span>
+                </div>
+                <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="export">
+                    <span class="entry-icon">🎬</span>
+                    <span class="entry-label">Экспорт видео/GIF...</span>
+                    <span class="entry-shortcut">Ctrl+E</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-item" data-menu="edit">
+            Правка
+            <div class="menu-dropdown">
+                <div class="menu-entry" data-action="undo">
+                    <span class="entry-icon">↶</span>
+                    <span class="entry-label">Отменить</span>
+                    <span class="entry-shortcut">Ctrl+Z</span>
+                </div>
+                <div class="menu-entry" data-action="redo">
+                    <span class="entry-icon">↷</span>
+                    <span class="entry-label">Вернуть</span>
+                    <span class="entry-shortcut">Ctrl+Y</span>
+                </div>
+                <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="duplicate">
+                    <span class="entry-icon">📋</span>
+                    <span class="entry-label">Дублировать объект</span>
+                    <span class="entry-shortcut">Ctrl+D</span>
+                </div>
+                <div class="menu-entry" data-action="delete-object">
+                    <span class="entry-icon">🗑️</span>
+                    <span class="entry-label">Удалить объект</span>
+                    <span class="entry-shortcut">Del</span>
+                </div>
+                <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="delete-keyframe">
+                    <span class="entry-icon">◆</span>
+                    <span class="entry-label">Удалить ключевой кадр</span>
+                    <span class="entry-shortcut">Del</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-item" data-menu="view">
+            Вид
+            <div class="menu-dropdown">
+                <div class="menu-entry" data-action="toggle-grid">
+                    <span class="entry-icon">⊞</span>
+                    <span class="entry-label">Показать сетку</span>
+                    <span class="entry-shortcut">G</span>
+                </div>
+                <div class="menu-entry" data-action="toggle-snap">
+                    <span class="entry-icon">🧲</span>
+                    <span class="entry-label">Режим магнита</span>
+                    <span class="entry-shortcut">S</span>
+                </div>
+                <div class="menu-entry" data-action="toggle-parenting-links">
+                    <span class="entry-icon">🔗</span>
+                    <span class="entry-label">Показать привязки</span>
+                    <span class="entry-shortcut">L</span>
+                </div>
+                <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="project-settings">
+                    <span class="entry-icon">⚙️</span>
+                    <span class="entry-label">Настройки проекта...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-item" data-menu="object">
+            Объект
+            <div class="menu-dropdown">
+                <div class="menu-entry" data-action="add-keyframe">
+                    <span class="entry-icon">◆</span>
+                    <span class="entry-label">Записать ключевой кадр</span>
+                    <span class="entry-shortcut">F6</span>
+                </div>
+                <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="toggle-visibility">
+                    <span class="entry-icon">👁</span>
+                    <span class="entry-label">Переключить видимость</span>
+                    <span class="entry-shortcut">H</span>
+                </div>
+                <div class="menu-entry" data-action="set-parent">
+                    <span class="entry-icon">🔗</span>
+                    <span class="entry-label">Привязать к объекту...</span>
+                    <span class="entry-shortcut">Ctrl+P</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-item" data-menu="playback">
+            Воспроизведение
+            <div class="menu-dropdown">
+                <div class="menu-entry" data-action="play-pause">
+                    <span class="entry-icon">▶</span>
+                    <span class="entry-label">Play / Pause</span>
+                    <span class="entry-shortcut">Space</span>
+                </div>
+                <div class="menu-separator"></div>
+                <div class="menu-entry" data-action="go-start">
+                    <span class="entry-icon">⏮</span>
+                    <span class="entry-label">В начало</span>
+                    <span class="entry-shortcut">Home</span>
+                </div>
+                <div class="menu-entry" data-action="go-end">
+                    <span class="entry-icon">⏭</span>
+                    <span class="entry-label">В конец</span>
+                    <span class="entry-shortcut">End</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-item" data-menu="help">
+            Помощь
+            <div class="menu-dropdown">
+                <div class="menu-entry" data-action="show-shortcuts">
+                    <span class="entry-icon">⌨️</span>
+                    <span class="entry-label">Горячие клавиши</span>
+                </div>
+                <div class="menu-entry" data-action="about">
+                    <span class="entry-icon">ℹ️</span>
+                    <span class="entry-label">О программе</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= ПАНЕЛЬ ИНСТРУМЕНТОВ ================= -->
+    <div id="toolbar">
+        <div class="toolbar-group">
+            <button id="btn-undo" class="toggle" title="Отменить (Ctrl+Z)" disabled>↶ Отменить</button>
+            <button id="btn-redo" class="toggle" title="Вернуть (Ctrl+Y)" disabled>↷ Вернуть</button>
+        </div>
+        <div class="toolbar-sep"></div>
+        <div class="toolbar-group">
+            <button id="btn-grid" class="toggle" title="Показать сетку (G)">⊞ Сетка</button>
+            <button id="btn-snap" class="toggle" title="Магнит (S)">🧲 Магнит</button>
+            <label>Шаг:
+                <input type="number" id="inp-grid-size" value="25" min="5" max="200" step="5"> px
+            </label>
+        </div>
+        <div class="toolbar-sep"></div>
+        <span id="kf-status">—</span>
+        <span style="margin-left:auto; font-size:11px; color:var(--text-dim);" id="project-name">Без названия</span>
+    </div>
+
+    <!-- ================= ОСНОВНАЯ РАСКЛАДКА ================= -->
+    <div id="main">
+        <div id="workspace">
+            <canvas id="c" width="800" height="500"></canvas>
+        </div>
+        <div class="resize-handle-v" id="resize-inspector"></div>
+        <div id="inspector">
+            <div id="inspector-header">Инспектор</div>
+            <div id="inspector-content">
+                <div id="no-selection">Объект не выбран<br><br>Добавьте изображение или выделите объект на холсте</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="resize-handle-h" id="resize-timeline"></div>
+
+    <!-- ================= TIMELINE ================= -->
+    <div id="timeline">
+        <div id="timeline-toolbar">
+            <div class="playback-controls">
+                <button class="nav-btn" id="btn-go-start" title="В начало (Home)">⏮</button>
+                <button class="play-btn primary" id="btn-play" title="Play/Pause (Space)">▶</button>
+                <button class="nav-btn" id="btn-go-end" title="В конец (End)">⏭</button>
+                <span id="time-display" style="font-size:11px;color:var(--text-dim);padding:4px 8px;background:#1a1a1a;border-radius:3px;border:1px solid #444;">0.00s</span>
+            </div>
+            <!-- НОВАЯ КНОПКА: Динамический ключевой кадр -->
+            <button id="btn-timeline-kf" class="primary" style="margin-left: 8px;">◆ Добавить кадр</button>
+
+            <div class="toolbar-sep"></div>
+
+            <label>Длительность:
+                <input type="number" id="inp-duration" value="5" min="1" max="120" step="1"> сек
+            </label>
+            <label>Шаг ползунка:
+                <input type="number" id="inp-step" value="0.05" min="0.01" max="1" step="0.01"> сек
+            </label>
+            <span style="margin-left:auto;" id="timeline-info"></span>
+        </div>
+        <div id="timeline-body">
+            <div id="track-labels">
+                <div id="track-labels-header">Объекты</div>
+                <div id="track-labels-list"></div>
+            </div>
+            <div id="timeline-scroll">
+                <div id="timeline-content">
+                    <div id="time-ruler"></div>
+                    <div id="tracks-area"></div>
+                    <div id="playhead" style="left: 0;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= EASING POPUP ================= -->
+    <div id="easing-popup">
+        <div id="easing-popup-header">Выберите тип перехода</div>
+        <svg id="easing-popup-graph" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path id="popup-graph-path" fill="none" stroke="#007acc" stroke-width="3" vector-effect="non-scaling-stroke"/>
+        </svg>
+        <div id="easing-list"></div>
+    </div>
+
+    <!-- ================= МОДАЛКА: НОВЫЙ ПРОЕКТ ================= -->
+    <div class="modal-overlay" id="modal-new-project">
+        <div class="modal-content">
+            <h3>Новый проект</h3>
+            <div class="form-group">
+                <label>Название проекта</label>
+                <input type="text" id="np-name" value="Без названия">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Ширина холста (px)</label>
+                    <input type="number" id="np-width" value="800" min="100" max="3840" step="10">
+                </div>
+                <div class="form-group">
+                    <label>Высота холста (px)</label>
+                    <input type="number" id="np-height" value="500" min="100" max="2160" step="10">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Длительность (сек)</label>
+                <input type="number" id="np-duration" value="5" min="1" max="120" step="1">
+            </div>
+            <div class="form-group">
+                <label>Фон</label>
+                <div class="bg-mode-tabs">
+                    <div class="bg-mode-tab active" data-mode="color">Цвет</div>
+                    <div class="bg-mode-tab" data-mode="image">Изображение</div>
+                    <div class="bg-mode-tab" data-mode="transparent">Прозрачный</div>
+                </div>
+                <div class="bg-mode-panel active" data-panel="color">
+                    <input type="color" id="np-bg-color" value="#ffffff">
+                </div>
+                <div class="bg-mode-panel" data-panel="image">
+                    <div class="file-drop" id="np-bg-drop">
+                        📁 Кликните или перетащите изображение
+                    </div>
+                    <input type="file" id="np-bg-file" accept="image/*" style="display:none;">
+                </div>
+                <div class="bg-mode-panel" data-panel="transparent">
+                    <div style="padding:10px; color:var(--text-dim); font-size:12px; text-align:center;">
+                        Фон будет прозрачным (для экспорта в GIF/WebM с альфа-каналом)
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <button onclick="closeModal('modal-new-project')">Отмена</button>
+                <button class="primary" id="btn-create-project">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= МОДАЛКА: НАСТРОЙКИ ПРОЕКТА ================= -->
+    <div class="modal-overlay" id="modal-project-settings">
+        <div class="modal-content">
+            <h3>Настройки проекта</h3>
+            <div class="form-group">
+                <label>Название</label>
+                <input type="text" id="ps-name">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Ширина (px)</label>
+                    <input type="number" id="ps-width" min="100" max="3840" step="10">
+                </div>
+                <div class="form-group">
+                    <label>Высота (px)</label>
+                    <input type="number" id="ps-height" min="100" max="2160" step="10">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Фон</label>
+                <div class="bg-mode-tabs">
+                    <div class="bg-mode-tab active" data-mode="color">Цвет</div>
+                    <div class="bg-mode-tab" data-mode="image">Изображение</div>
+                    <div class="bg-mode-tab" data-mode="transparent">Прозрачный</div>
+                </div>
+                <div class="bg-mode-panel active" data-panel="color">
+                    <input type="color" id="ps-bg-color" value="#ffffff">
+                </div>
+                <div class="bg-mode-panel" data-panel="image">
+                    <div class="file-drop" id="ps-bg-drop">
+                        📁 Кликните или перетащите изображение
+                    </div>
+                    <input type="file" id="ps-bg-file" accept="image/*" style="display:none;">
+                </div>
+                <div class="bg-mode-panel" data-panel="transparent">
+                    <div style="padding:10px; color:var(--text-dim); font-size:12px; text-align:center;">
+                        Прозрачный фон
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <button onclick="closeModal('modal-project-settings')">Отмена</button>
+                <button class="primary" id="btn-apply-settings">Применить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= МОДАЛКА: ЭКСПОРТ ================= -->
+    <div class="modal-overlay" id="modal-export">
+        <div class="modal-content">
+            <h3>Экспорт анимации</h3>
+            <div class="form-group">
+                <label>Формат</label>
+                <select id="export-format">
+                    <option value="gif">GIF (анимация)</option>
+                    <option value="mp4">MP4 (видео)</option>
+                    <option value="webm">WebM (видео)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>FPS (кадров в секунду)</label>
+                <select id="export-fps">
+                    <option value="12">12 FPS</option>
+                    <option value="15">15 FPS</option>
+                    <option value="24" selected>24 FPS</option>
+                    <option value="30">30 FPS</option>
+                    <option value="60">60 FPS</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Качество (1-100)</label>
+                <input type="number" id="export-quality" value="10" min="1" max="100" step="1">
+            </div>
+            <div class="form-group">
+                <label>Размер (ширина, px)</label>
+                <input type="number" id="export-width" value="800" min="100" max="1920" step="100">
+            </div>
+            <div class="progress-bar" id="export-progress">
+                <div class="fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-text" id="progress-text"></div>
+            <div class="buttons">
+                <button onclick="closeModal('modal-export')">Отмена</button>
+                <button class="primary" id="btn-start-export">Экспортировать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= МОДАЛКА: ГОРЯЧИЕ КЛАВИШИ ================= -->
+    <div class="modal-overlay" id="modal-shortcuts">
+        <div class="modal-content">
+            <h3>Горячие клавиши</h3>
+            <div style="font-size:12px; line-height:1.8;">
+                <div><b>Ctrl+N</b> — Новый проект</div>
+                <div><b>Ctrl+O</b> — Открыть проект</div>
+                <div><b>Ctrl+S</b> — Сохранить проект</div>
+                <div><b>Ctrl+E</b> — Экспорт</div>
+                <div><b>Ctrl+I</b> — Добавить изображение</div>
+                <div><b>Ctrl+D</b> — Дублировать объект</div>
+                <div style="height:8px;"></div>
+                <div><b>Space</b> — Play / Pause</div>
+                <div><b>Home</b> — В начало</div>
+                <div><b>End</b> — В конец</div>
+                <div><b>F6</b> — Записать ключевой кадр</div>
+                <div style="height:8px;"></div>
+                <div><b>H</b> — Переключить видимость</div>
+                <div><b>G</b> — Сетка вкл/выкл</div>
+                <div><b>S</b> — Магнит вкл/выкл</div>
+                <div><b>Delete</b> — Удалить выделенный кадр/объект</div>
+            </div>
+            <div class="buttons">
+                <button class="primary" onclick="closeModal('modal-shortcuts')">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= МОДАЛКА: О ПРОГРАММЕ ================= -->
+    <div class="modal-overlay" id="modal-about">
+        <div class="modal-content">
+            <h3>Minimal Animation Studio</h3>
+            <div style="font-size:12px; line-height:1.6; color:var(--text-dim);">
+                <p>Веб-редактор для создания анимированных баннеров и мультиков.</p>
+                <p>Версия: 1.0</p>
+                <p>Дата: 31 июля 2026</p>
+                <p style="margin-top:10px;">Создано с использованием:<br>Fabric.js, JSZip, FileSaver.js, gif.js</p>
+            </div>
+            <div class="buttons">
+                <button class="primary" onclick="closeModal('modal-about')">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= СКРЫТЫЕ INPUT ================= -->
+    <input type="file" id="load-input" accept=".zip" style="display: none;">
+    <input type="file" id="file-input" accept="image/*" style="display: none;">
+
+    <!-- ================= ТОСТЫ ================= -->
+    <div id="toast-container"></div>
+
+    <!-- ===== JS МОДУЛИ (порядок важен!) ===== -->
+    <script src="js/core/config.js"></script>
+    <script src="js/core/utils.js"></script>
+    <script src="js/core/canvas.js"></script>
+
+    <script src="js/animation/easing.js"></script>
+    <script src="js/animation/keyframes.js"></script>
+    <script src="js/animation/interpolation.js"></script>
+    <script src="js/animation/playback.js"></script>
+
+    <script src="js/objects/manager.js"></script>
+    <script src="js/objects/visibility.js"></script>
+    <script src="js/objects/background.js"></script>
+
+    <script src="js/ui/menubar.js"></script>
+    <script src="js/ui/modals.js"></script>
+    <script src="js/ui/inspector.js"></script>
+    <script src="js/ui/timeline.js"></script>
+
+    <script src="js/export/gif.js"></script>
+    <script src="js/export/video.js"></script>
+
+    <script src="js/project/new.js"></script>
+    <script src="js/project/save.js"></script>
+    <script src="js/project/load.js"></script>
+
+    <script src="js/core/history.js"></script>
+    <script src="js/objects/pivot.js"></script>
+    <script src="js/objects/layers.js"></script>
+    <script src="js/objects/parenting.js"></script>
+
+
+    <script src="js/main.js"></script>
+</body>
+</html>
+
+
+======================================================================
+FILE: ./README.md
+======================================================================
+
+# Minimal Animation Studio
+
+Веб-редактор для создания анимированных баннеров и мультиков прямо в браузере.
+
+## 🚀 Быстрый старт
+
+1. Откройте `index.html` в браузере (Chrome/Firefox/Edge)
+2. Нажмите **Файл → Добавить изображение** (Ctrl+I)
+3. Переместите объект, нажмите **F6** чтобы записать ключевой кадр
+4. Перемотайте время, измените позицию, снова **F6**
+5. Нажмите **Space** для воспроизведения
+6. **Файл → Экспорт** для сохранения в GIF/MP4
+
+## 📚 Документация
+
+- [ARCHITECTURE.md](docs/ARCHITECTURE.md) — архитектура проекта
+- [API.md](docs/API.md) — справочник API
+- [KEYBOARD_SHORTCUTS.md](docs/KEYBOARD_SHORTCUTS.md) — горячие клавиши
+
+## 🎯 Возможности
+
+- ✅ Добавление изображений
+- ✅ Анимация позиции, размера, поворота, прозрачности
+- ✅ Ключевые кадры с интерполяцией
+- ✅ Easing функции (7 типов)
+- ✅ Анимация видимости (показать/скрыть)
+- ✅ Сетка и режим магнита
+- ✅ Экспорт в GIF, MP4, WebM
+- ✅ Сохранение/загрузка проектов (.zip)
+- ✅ Настраиваемый фон (цвет/изображение/прозрачный)
+- ✅ Горячие клавиши
+
+## 📦 Зависимости
+
+Все подключаются через CDN:
+- [Fabric.js](https://fabricjs.com/) 5.3.0 — работа с canvas
+- [JSZip](https://stuk.github.io/jszip/) 3.10.1 — ZIP архивы
+- [FileSaver.js](https://github.com/eligrey/FileSaver.js) 2.0.5 — сохранение файлов
+- [gif.js](https://jnordberg.github.io/gif.js/) 0.2.0 — генерация GIF
+
+## 🔧 Разработка
+
+Просто откройте `index.html` — сборка не требуется.
+
+## 📝 Лицензия
+
+MIT
+
+
+======================================================================
+FILE: ./docs/ARCHITECTURE.md
+======================================================================
+
+ 
+# Архитектура проекта
+
+## Структура модулей
+
+### Core (Ядро)
+- **config.js** — константы и настройки по умолчанию
+- **utils.js** — вспомогательные функции (toast, roundToStep, snapTime)
+- **canvas.js** — инициализация Fabric.js canvas
+
+### Animation (Анимация)
+- **easing.js** — функции плавности (linear, easeInQuad, etc.)
+- **keyframes.js** — управление ключевыми кадрами
+- **interpolation.js** — интерполяция значений между ключами
+- **playback.js** — воспроизведение (play/pause/scrub)
+
+### Objects (Объекты)
+- **manager.js** — добавление/удаление/дублирование объектов
+- **visibility.js** — управление видимостью
+- **background.js** — фоновые изображения
+
+### UI (Интерфейс)
+- **menubar.js** — меню-бар и обработка действий
+- **modals.js** — модальные окна (новый проект, экспорт, настройки)
+- **inspector.js** — панель свойств объекта
+- **timeline.js** — рендеринг временной шкалы
+
+### Export (Экспорт)
+- **gif.js** — экспорт в GIF через gif.js
+- **video.js** — экспорт в MP4/WebM через MediaRecorder
+
+### Project (Проекты)
+- **new.js** — создание нового проекта
+- **save.js** — сохранение в ZIP
+- **load.js** — загрузка из ZIP
+
+## Поток данных
+
+### Запись ключевого кадра
+
+
+======================================================================
+FILE: ./css/menubar.css
+======================================================================
+
+ 
+#menubar {
+    height: 30px;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 100;
+}
+.menu-item {
+    position: relative;
+    padding: 4px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 3px;
+    color: var(--text);
+}
+.menu-item:hover,
+.menu-item.open {
+    background: var(--bg-lighter);
+}
+.menu-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    min-width: 240px;
+    padding: 4px 0;
+    display: none;
+    z-index: 200;
+}
+.menu-item.open .menu-dropdown {
+    display: block;
+}
+.menu-entry {
+    display: flex;
+    align-items: center;
+    padding: 6px 16px;
+    font-size: 12px;
+    cursor: pointer;
+    gap: 12px;
+    color: var(--text);
+    position: relative;
+}
+.menu-entry:hover:not(.disabled) {
+    background: var(--accent);
+    color: #fff;
+}
+.menu-entry.disabled {
+    color: #555;
+    cursor: not-allowed;
+}
+.menu-entry .entry-label { flex: 1; }
+.menu-entry .entry-shortcut {
+    color: var(--text-dim);
+    font-size: 11px;
+    margin-left: 20px;
+}
+.menu-entry:hover:not(.disabled) .entry-shortcut {
+    color: rgba(255,255,255,0.7);
+}
+.menu-separator {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0;
+}
+.menu-entry .entry-icon {
+    width: 16px;
+    text-align: center;
+    font-size: 12px;
+}
+
+
+======================================================================
+FILE: ./css/modals.css
+======================================================================
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+.modal-overlay.show { display: flex; }
+.modal-content {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    min-width: 420px;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.modal-content h3 { margin: 0 0 16px 0; font-size: 16px; color: var(--text); }
+.modal-content .form-group { margin-bottom: 14px; }
+.modal-content label { display: block; margin-bottom: 4px; font-size: 12px; color: var(--text-dim); }
+.modal-content input[type="text"],
+.modal-content input[type="number"],
+.modal-content input[type="color"],
+.modal-content select {
+    width: 100%; padding: 6px;
+    background: #1a1a1a; border: 1px solid #555;
+    color: var(--text); border-radius: 3px; font-size: 13px;
+    font-family: inherit;
+}
+.modal-content input[type="color"] {
+    padding: 2px; height: 36px; cursor: pointer;
+}
+.modal-content .buttons { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+.modal-content .buttons button { min-width: 90px; }
+.form-row { display: flex; gap: 10px; }
+.form-row .form-group { flex: 1; }
+
+.bg-mode-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+    background: #1a1a1a;
+    padding: 3px;
+    border-radius: 4px;
+    border: 1px solid #555;
+}
+.bg-mode-tab {
+    flex: 1;
+    padding: 6px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 12px;
+    color: var(--text-dim);
+    transition: all 0.15s;
+}
+.bg-mode-tab.active {
+    background: var(--accent);
+    color: #fff;
+}
+.bg-mode-tab:hover:not(.active) {
+    background: var(--bg-lighter);
+    color: var(--text);
+}
+.bg-mode-panel { display: none; }
+.bg-mode-panel.active { display: block; }
+
+.file-drop {
+    border: 2px dashed #555;
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--text-dim);
+    font-size: 12px;
+}
+.file-drop:hover { border-color: var(--accent); color: var(--text); }
+.file-drop.has-file { border-color: #50c878; color: #50c878; }
+
+.progress-bar {
+    width: 100%; height: 20px;
+    background: #1a1a1a; border: 1px solid #555;
+    border-radius: 3px; overflow: hidden;
+    margin-top: 10px; display: none;
+}
+.progress-bar.show { display: block; }
+.progress-bar .fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.2s; }
+.progress-text { font-size: 11px; color: var(--text-dim); margin-top: 4px; text-align: center; }
+
+/* Toast */
+#toast-container {
+    position: fixed; top: 60px; right: 20px;
+    z-index: 3000; display: flex; flex-direction: column;
+    gap: 8px; pointer-events: none;
+}
+.toast {
+    background: var(--bg-panel); border: 1px solid var(--border);
+    border-left: 4px solid var(--accent); padding: 10px 16px;
+    border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    font-size: 12px; min-width: 200px;
+    animation: toast-in 0.2s ease-out;
+}
+.toast.success { border-left-color: #50c878; }
+.toast.error { border-left-color: #ff6b6b; }
+.toast.info { border-left-color: var(--accent); }
+@keyframes toast-in {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+
+======================================================================
+FILE: ./css/main.css
+======================================================================
+
+:root {
+    --bg-dark: #1e1e1e;
+    --bg-panel: #2d2d2d;
+    --bg-lighter: #3e3e3e;
+    --accent: #007acc;
+    --text: #e0e0e0;
+    --text-dim: #888;
+    --keyframe: #ffcc00;
+    --border: #444;
+    --track-hover: #353535;
+    --track-selected: #264f78;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+    font-size: 13px;
+}
+
+/* Кнопки */
+button, select {
+    background: var(--bg-lighter);
+    color: var(--text);
+    border: 1px solid #555;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+}
+button:hover { background: #505050; }
+button.primary { background: var(--accent); border-color: var(--accent); }
+button.primary:hover { background: #005a9e; }
+button.danger { background: #7a2020; border-color: #7a2020; }
+button.danger:hover { background: #a03030; }
+button.success { background: #2d6a3e; border-color: #2d6a3e; }
+button.success:hover { background: #3d8a52; }
+button.toggle.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+button:disabled:hover {
+    background: var(--bg-lighter);
+}
+/* Основная раскладка */
+#main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    min-height: 0;
+    position: relative;
+}
+
+/* Workspace */
+#workspace {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #121212;
+    overflow: auto;
+    position: relative;
+    min-width: 200px;
+}
+.canvas-container {
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    position: relative;
+}
+#grid-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 1;
+    display: none;
+}
+#grid-overlay.show { display: block; }
+
+/* Resize handles */
+.resize-handle-v {
+    width: 5px; cursor: col-resize; background: var(--border);
+    flex-shrink: 0; position: relative; z-index: 20; transition: background 0.15s;
+}
+.resize-handle-v:hover, .resize-handle-v.active { background: var(--accent); }
+.resize-handle-h {
+    height: 5px; cursor: row-resize; background: var(--border);
+    flex-shrink: 0; position: relative; z-index: 20; transition: background 0.15s;
+}
+.resize-handle-h:hover, .resize-handle-h.active { background: var(--accent); }
+
+/* Toolbar */
+#toolbar {
+    background: var(--bg-panel);
+    padding: 6px 12px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+.toolbar-sep { width: 1px; height: 22px; background: var(--border); margin: 0 4px; }
+.toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.toolbar-group label {
+    font-size: 11px;
+    color: var(--text-dim);
+}
+.toolbar-group input[type="number"] {
+    width: 50px;
+    padding: 3px 6px;
+    background: #1a1a1a;
+    border: 1px solid #555;
+    color: var(--text);
+    border-radius: 3px;
+    font-size: 11px;
+}
+
+#kf-status {
+    font-size: 11px;
+    color: var(--text-dim);
+    padding: 4px 10px;
+    background: #1a1a1a;
+    border-radius: 3px;
+    border: 1px solid #444;
+    min-width: 180px;
+    text-align: center;
+}
+#kf-status.on-kf { color: #ffcc00; border-color: #b38f00; background: #3a2f00; }
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #1a1a1a; }
+::-webkit-scrollbar-thumb { background: #555; border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: #777; }
+
+
+======================================================================
+FILE: ./css/timeline.css
+======================================================================
+
+ 
+#timeline {
+    height: 200px; min-height: 80px; max-height: 60vh;
+    background: var(--bg-panel); display: flex; flex-direction: column;
+    flex-shrink: 0; position: relative;
+}
+#timeline-toolbar {
+    height: 36px;
+    background: var(--bg-lighter);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    gap: 8px;
+    flex-shrink: 0;
+}
+#timeline-toolbar span { font-size: 11px; color: var(--text-dim); }
+#timeline-toolbar label {
+    font-size: 11px; color: var(--text-dim);
+    display: flex; align-items: center; gap: 4px;
+}
+.playback-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding-right: 10px;
+    border-right: 1px solid var(--border);
+    margin-right: 4px;
+}
+.play-btn {
+    width: 32px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    padding: 0;
+}
+.play-btn.primary {
+    width: 40px;
+    background: var(--accent);
+    border-color: var(--accent);
+}
+.play-btn.primary:hover { background: #005a9e; }
+.nav-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    padding: 0;
+}
+#inp-duration, #inp-step {
+    width: 60px; background: #1a1a1a; border: 1px solid #555;
+    color: var(--text); padding: 2px 6px; border-radius: 3px;
+    font-size: 11px; font-family: inherit;
+}
+#inp-duration:focus, #inp-step:focus { outline: none; border-color: var(--accent); }
+
+#timeline-body { flex: 1; display: flex; overflow: hidden; position: relative; }
+#track-labels {
+    width: 180px; background: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    flex-shrink: 0; overflow: hidden;
+}
+#track-labels-header {
+    height: 24px; border-bottom: 1px solid var(--border);
+    background: var(--bg-lighter); display: flex;
+    align-items: center; padding: 0 10px;
+    font-size: 11px; color: var(--text-dim);
+}
+.track-label {
+    height: 32px; border-bottom: 1px solid #333;
+    display: flex; align-items: center; padding: 0 10px;
+    cursor: pointer; font-size: 12px; gap: 6px;
+}
+.track-label:hover { background: var(--track-hover); }
+.track-label.selected {
+    background: var(--track-selected);
+    border-left: 3px solid var(--accent);
+    padding-left: 7px;
+}
+.track-label .track-icon { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.track-label .track-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.track-eye {
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+    font-size: 13px;
+    border-radius: 3px;
+}
+.track-eye:hover { opacity: 1; background: rgba(255,255,255,0.05); }
+.track-eye.hidden { opacity: 0.3; }
+
+#timeline-scroll { flex: 1; overflow-x: auto; overflow-y: hidden; position: relative; }
+#timeline-content { position: relative; height: 100%; min-width: 100%; }
+#time-ruler {
+    height: 24px; background: var(--bg-lighter);
+    position: sticky; top: 0; border-bottom: 1px solid var(--border);
+    cursor: pointer; z-index: 5;
+}
+.ruler-mark {
+    position: absolute; top: 0; bottom: 0;
+    width: 1px; background: #555;
+    font-size: 10px; color: #aaa; padding-left: 4px;
+}
+#tracks-area { position: relative; }
+.track-row {
+    height: 32px; border-bottom: 1px solid #333; position: relative;
+}
+.track-row:nth-child(even) { background: rgba(255,255,255,0.02); }
+.track-row.selected { background: rgba(0, 122, 204, 0.1); }
+.grid-line { position: absolute; top: 0; bottom: 0; width: 1px; pointer-events: none; z-index: 0; }
+.grid-line.minor { background: rgba(255,255,255,0.04); }
+.grid-line.major { background: rgba(255,255,255,0.12); }
+
+#playhead {
+    position: absolute; top: 0; bottom: 0;
+    width: 2px; background: #ff4444;
+    pointer-events: none; z-index: 10;
+}
+#playhead::before {
+    content: ''; position: absolute;
+    top: 0; left: -6px; width: 14px; height: 10px;
+    background: #ff4444;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    pointer-events: auto; cursor: pointer;
+}
+#playhead.snapped { background: #ffcc00; box-shadow: 0 0 8px rgba(255, 204, 0, 0.6); }
+#playhead.snapped::before { background: #ffcc00; }
+
+.keyframe {
+    position: absolute; width: 10px; height: 10px;
+    background: var(--keyframe);
+    transform: rotate(45deg) translate(-50%, -50%);
+    cursor: grab; border: 1px solid #b38f00;
+    top: 50%; z-index: 3; transition: box-shadow 0.15s;
+}
+.keyframe:hover { background: #ffe066; transform: rotate(45deg) translate(-50%, -50%) scale(1.3); }
+.keyframe.dragging {
+    cursor: grabbing; background: #ff8800;
+    transform: rotate(45deg) translate(-50%, -50%) scale(1.4); z-index: 20;
+}
+.keyframe.active {
+    box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.6), 0 0 12px rgba(255, 68, 68, 0.8);
+    transform: rotate(45deg) translate(-50%, -50%) scale(1.5); z-index: 4;
+}
+.keyframe.selected-kf { outline: 2px solid #fff; outline-offset: 2px; }
+
+.animation-segment {
+    position: absolute; height: 20px; top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 122, 204, 0.25);
+    border: 1px solid rgba(0, 122, 204, 0.6);
+    border-radius: 3px; cursor: pointer;
+    z-index: 1; transition: background 0.15s;
+}
+.animation-segment:hover { background: rgba(0, 122, 204, 0.45); }
+.animation-segment .seg-label {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 9px; color: #ccc;
+    white-space: nowrap; pointer-events: none;
+    text-transform: uppercase; letter-spacing: 0.3px;
+}
+.animation-segment .seg-graph {
+    position: absolute; bottom: 1px; left: 4px; right: 4px;
+    height: 10px; pointer-events: none; opacity: 0.5;
+}
+.hidden-segment {
+    position: absolute; height: 20px; top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 107, 107, 0.2);
+    border: 1px solid rgba(255, 107, 107, 0.5);
+    border-radius: 3px;
+    z-index: 1;
+    pointer-events: none;
+}
+.hidden-segment .hidden-label {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 9px; color: #ff6b6b;
+    white-space: nowrap; pointer-events: none;
+    text-transform: uppercase; letter-spacing: 0.3px;
+    font-weight: 600;
+}
+
+#easing-popup {
+    position: fixed; background: var(--bg-panel);
+    border: 1px solid var(--border); border-radius: 6px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    padding: 12px; z-index: 1000; display: none; min-width: 280px;
+}
+#easing-popup.show { display: block; }
+#easing-popup-header {
+    font-size: 12px; font-weight: 600; margin-bottom: 10px;
+    color: var(--text-dim); text-transform: uppercase;
+}
+#easing-popup-graph {
+    width: 100%; height: 80px; background: #111;
+    border: 1px solid #555; border-radius: 4px; margin-bottom: 10px;
+}
+#easing-list {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6px; max-height: 200px; overflow-y: auto;
+}
+.easing-option {
+    padding: 6px 10px; background: var(--bg-lighter);
+    border: 1px solid #555; border-radius: 3px;
+    cursor: pointer; font-size: 11px; transition: all 0.15s;
+}
+.easing-option:hover { background: #505050; border-color: var(--accent); }
+.easing-option.selected { background: var(--accent); border-color: var(--accent); }
+
+
+======================================================================
+FILE: ./css/inspector.css
+======================================================================
+
+ 
+#inspector {
+    width: 260px; min-width: 180px; max-width: 500px;
+    background: var(--bg-panel); display: flex; flex-direction: column;
+    flex-shrink: 0; overflow-y: auto;
+}
+#inspector-header {
+    padding: 10px 12px; background: var(--bg-lighter);
+    border-bottom: 1px solid var(--border); font-weight: 600;
+    font-size: 12px; text-transform: uppercase;
+    color: var(--text-dim); letter-spacing: 0.5px;
+}
+.inspector-section { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+.inspector-section h4 {
+    margin: 0 0 8px 0; font-size: 11px; text-transform: uppercase;
+    color: var(--text-dim); letter-spacing: 0.5px; font-weight: 600;
+}
+.prop-row { display: flex; align-items: center; margin-bottom: 6px; gap: 6px; }
+.prop-row label { width: 50px; font-size: 11px; color: var(--text-dim); flex-shrink: 0; }
+.prop-row input[type="text"],
+.prop-row input[type="number"],
+.prop-row input[type="color"] {
+    flex: 1; background: #1a1a1a; border: 1px solid #555;
+    color: var(--text); padding: 4px 6px; border-radius: 3px;
+    font-size: 12px; font-family: inherit; min-width: 0;
+}
+.prop-row input[type="color"] {
+    padding: 1px; height: 28px; cursor: pointer;
+}
+.prop-row input:focus { outline: none; border-color: var(--accent); }
+.prop-pair { display: flex; gap: 4px; flex: 1; }
+.prop-pair > div { flex: 1; display: flex; align-items: center; gap: 4px; min-width: 0; }
+.prop-pair .mini-label { color: var(--text-dim); font-size: 10px; width: 12px; }
+.prop-pair input { width: 100%; min-width: 0; }
+#no-selection { padding: 30px 20px; text-align: center; color: var(--text-dim); font-size: 12px; }
+.inspector-actions { display: flex; gap: 6px; padding: 10px 12px; }
+.inspector-actions button { flex: 1; }
+
+.visibility-indicator {
+    flex: 1;
+    padding: 4px 8px;
+    background: #1a1a1a;
+    border: 1px solid #555;
+    border-radius: 3px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.visibility-indicator:hover { border-color: var(--accent); }
+.visibility-indicator.visible { color: #50c878; border-color: #3d8a52; }
+.visibility-indicator.hidden { color: #ff6b6b; border-color: #7a2020; }
+
+
+======================================================================
+FILE: ./js/main.js
+======================================================================
+
+
+// ================= ГЛАВНЫЙ ФАЙЛ =================
+// Точка входа приложения. Инициализирует все модули после загрузки DOM.
+
+document.addEventListener('DOMContentLoaded', () => {
+  // ===== 1. ИНИЦИАЛИЗАЦИЯ ЯДРА =====
+  initCanvas();
+  initHistory();
+  initParentingEvents();
+  initPivotEvents(); // <-- ДОБАВЬТЕ ЭТУ СТРОКУ
+    // ===== 2. ИНИЦИАЛИЗАЦИЯ UI =====
+    initMenu();
+    initModals();
+    initScrub();
+
+    // ===== 3. ОБРАБОТЧИКИ КНОПОК TIMELINE =====
+    document.getElementById('btn-play').onclick = togglePlay;
+    document.getElementById('btn-go-start').onclick = goToStart;
+    document.getElementById('btn-go-end').onclick = goToEnd;
+
+    // ===== 4. СЕТКА И МАГНИТ =====
+    document.getElementById('btn-grid').onclick = () => {
+        gridEnabled = !gridEnabled;
+        document.getElementById('btn-grid').classList.toggle('active', gridEnabled);
+        updateGridOverlay();
+    };
+    // ===== UNDO / REDO КНОПКИ =====
+    document.getElementById('btn-undo').onclick = undo;
+    document.getElementById('btn-redo').onclick = redo;
+
+    document.getElementById('btn-snap').onclick = () => {
+        snapEnabled = !snapEnabled;
+        document.getElementById('btn-snap').classList.toggle('active', snapEnabled);
+        toast(snapEnabled ? 'Магнит включён' : 'Магнит выключен', 'info', 1500);
+    };
+
+    document.getElementById('inp-grid-size').onchange = (e) => {
+        let v = parseInt(e.target.value);
+        if (isNaN(v) || v < 5) v = 5;
+        if (v > 200) v = 200;
+        gridSize = v;
+        e.target.value = gridSize;
+        updateGridOverlay();
+    };
+
+    // ===== 5. ДЛИТЕЛЬНОСТЬ И ШАГ =====
+    document.getElementById('inp-duration').addEventListener('change', () => {
+        let v = parseFloat(document.getElementById('inp-duration').value);
+        if (isNaN(v) || v < 1) v = 1;
+        if (v > 120) v = 120;
+        v = Math.round(v);
+        DURATION = v;
+        document.getElementById('inp-duration').value = DURATION;
+        if (currentTime > DURATION) {
+            currentTime = DURATION;
+            updatePlayhead();
+            applyStateAtTime(currentTime);
+        }
+        renderTimeline();
+    });
+
+    document.getElementById('inp-step').addEventListener('change', () => {
+        let v = parseFloat(document.getElementById('inp-step').value);
+        if (isNaN(v) || v < 0.01) v = 0.01;
+        if (v > 1) v = 1;
+        TIME_STEP = Math.round(v * 100) / 100;
+        document.getElementById('inp-step').value = TIME_STEP.toFixed(2);
+        currentTime = roundToStep(currentTime);
+        updatePlayhead();
+        applyStateAtTime(currentTime);
+    });
+
+    // ===== 6. СОЗДАНИЕ НОВОГО ПРОЕКТА =====
+    document.getElementById('btn-create-project').onclick = async () => {
+        if (canvas.getObjects().filter(o => !o.isBackgroundImage).length > 0) {
+            if (!confirm('Создание нового проекта очистит текущую сцену. Продолжить?')) {
+                return;
+            }
+        }
+
+        const name = document.getElementById('np-name').value || 'Без названия';
+        const width = parseInt(document.getElementById('np-width').value) || 800;
+        const height = parseInt(document.getElementById('np-height').value) || 500;
+        const duration = parseInt(document.getElementById('np-duration').value) || 5;
+        const mode = document.getElementById('modal-new-project').dataset.currentMode || 'color';
+        const color = document.getElementById('np-bg-color').value;
+        const bgFile = document.getElementById('np-bg-drop')._getPendingFile();
+
+        await createNewProject({
+            name, width, height, duration,
+            bgMode: mode, bgColor: color, bgFile
+        });
+
+        closeModal('modal-new-project');
+        document.getElementById('np-bg-drop')._clearPendingFile();
+    };
+
+    // ===== 7. ПРИМЕНЕНИЕ НАСТРОЕК ПРОЕКТА =====
+    document.getElementById('btn-apply-settings').onclick = async () => {
+        const name = document.getElementById('ps-name').value || 'Без названия';
+        const width = parseInt(document.getElementById('ps-width').value) || 800;
+        const height = parseInt(document.getElementById('ps-height').value) || 500;
+        const mode = document.getElementById('modal-project-settings').dataset.currentMode || 'color';
+        const color = document.getElementById('ps-bg-color').value;
+        const bgFile = document.getElementById('ps-bg-drop')._getPendingFile();
+
+        projectName = name;
+        document.getElementById('project-name').textContent = projectName;
+
+        canvas.setWidth(width);
+        canvas.setHeight(height);
+
+        const fileToApply = bgFile || (bgImageObj && bgImageDataURL
+            ? dataURLtoFile(bgImageDataURL, 'bg.png')
+            : null);
+
+        await applyBackground(mode, color, fileToApply);
+
+        canvas.calcOffset();
+        canvas.renderAll();
+        renderTimeline();
+        updateGridOverlay();
+
+        closeModal('modal-project-settings');
+        document.getElementById('ps-bg-drop')._clearPendingFile();
+        toast('Настройки проекта применены', 'success');
+    };
+
+    // ===== 8. ЭКСПОРТ =====
+    document.getElementById('btn-start-export').onclick = async () => {
+        const format = document.getElementById('export-format').value;
+        const fps = parseInt(document.getElementById('export-fps').value);
+        const quality = parseInt(document.getElementById('export-quality').value);
+        const width = parseInt(document.getElementById('export-width').value);
+        const height = Math.round(canvas.getHeight() * (width / canvas.getWidth()));
+
+        const progressBar = document.getElementById('export-progress');
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+
+        progressBar.classList.add('show');
+        closeModal('modal-export');
+
+        try {
+            const onProgress = (progress) => {
+                progressFill.style.width = `${progress}%`;
+                const label = format === 'gif' ? 'GIF' : format.toUpperCase();
+                progressText.textContent = `Создание ${label}: ${Math.round(progress)}%`;
+            };
+
+            if (format === 'gif') {
+                await exportToGIF(fps, quality, width, height, onProgress);
+            } else {
+                await exportToVideo(format, fps, quality, width, height, onProgress);
+            }
+            toast('Экспорт завершён!', 'success');
+        } catch (err) {
+            console.error(err);
+            toast('Ошибка экспорта: ' + err.message, 'error', 5000);
+        } finally {
+            progressBar.classList.remove('show');
+            progressFill.style.width = '0%';
+            progressText.textContent = '';
+        }
+    };
+
+    // ===== 9. ЗАГРУЗКА ПРОЕКТА =====
+    document.getElementById('load-input').onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (canvas.getObjects().filter(o => !o.isBackgroundImage).length > 0) {
+            if (!confirm('Загрузка проекта заменит текущую сцену. Продолжить?')) {
+                e.target.value = '';
+                return;
+            }
+        }
+        loadProject(file);
+        e.target.value = '';
+    };
+
+    // ===== 10. ДОБАВЛЕНИЕ ИЗОБРАЖЕНИЯ =====
+    document.getElementById('file-input').onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        addImageFromFile(file);
+        e.target.value = '';
+    };
+
+    // ===== 11. RESIZE HANDLES =====
+    (function initResize() {
+        const handleV = document.getElementById('resize-inspector');
+        const inspector = document.getElementById('inspector');
+        const handleH = document.getElementById('resize-timeline');
+        const timeline = document.getElementById('timeline');
+
+        let isResizingV = false, startX = 0, startW = 0;
+        let isResizingH = false, startY = 0, startH = 0;
+
+        handleV.addEventListener('mousedown', e => {
+            isResizingV = true;
+            startX = e.clientX;
+            startW = inspector.offsetWidth;
+            handleV.classList.add('active');
+            document.body.style.cursor = 'col-resize';
+            e.preventDefault();
+        });
+
+        handleH.addEventListener('mousedown', e => {
+            isResizingH = true;
+            startY = e.clientY;
+            startH = timeline.offsetHeight;
+            handleH.classList.add('active');
+            document.body.style.cursor = 'row-resize';
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', e => {
+            if (isResizingV) {
+                const dx = startX - e.clientX;
+                const newW = Math.max(180, Math.min(500, startW + dx));
+                inspector.style.width = newW + 'px';
+                canvas.calcOffset();
+            }
+            if (isResizingH) {
+                const dy = startY - e.clientY;
+                const newH = Math.max(80, Math.min(window.innerHeight * 0.6, startH + dy));
+                timeline.style.height = newH + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isResizingV) {
+                isResizingV = false;
+                handleV.classList.remove('active');
+                document.body.style.cursor = '';
+                canvas.calcOffset();
+            }
+            if (isResizingH) {
+                isResizingH = false;
+                handleH.classList.remove('active');
+                document.body.style.cursor = '';
+            }
+        });
+    })();
+
+    // ===== 12. СОБЫТИЯ CANVAS =====
+    canvas.on('selection:created', () => {
+        renderTrackLabels();
+        renderTracks();
+        updateInspector();
+        updateKfStatus();
+        updateTimelineKfButton(); // <-- ДОБАВИТЬ
+    });
+    canvas.on('selection:updated', () => {
+        renderTrackLabels();
+        renderTracks();
+        updateInspector();
+        updateKfStatus();
+        updateTimelineKfButton(); // <-- ДОБАВИТЬ
+    });
+    canvas.on('selection:cleared', () => {
+        renderTrackLabels();
+        renderTracks();
+        updateInspector();
+        updateKfStatus();
+        updateTimelineKfButton(); // <-- ДОБАВИТЬ
+    });
+    canvas.on('object:modified', updateInspector);
+
+    canvas.on('object:moving', (e) => {
+        const o = e.target;
+        if (o.isBackgroundImage) return;
+        if (snapEnabled && gridSize > 0) {
+            o.set({
+                left: Math.round(o.left / gridSize) * gridSize,
+                top: Math.round(o.top / gridSize) * gridSize
+            });
+        }
+        const x = document.getElementById('inp-x');
+        const y = document.getElementById('inp-y');
+        if (x && document.activeElement !== x) x.value = Math.round(o.left);
+        if (y && document.activeElement !== y) y.value = Math.round(o.top);
+    });
+
+    canvas.on('object:scaling', (e) => {
+        const o = e.target;
+        if (o.isBackgroundImage) return;
+        if (snapEnabled && gridSize > 0) {
+            const curW = o.width * o.scaleX;
+            const curH = o.height * o.scaleY;
+            const newW = Math.max(gridSize, Math.round(curW / gridSize) * gridSize);
+            const newH = Math.max(gridSize, Math.round(curH / gridSize) * gridSize);
+            o.set({
+                scaleX: newW / o.width,
+                scaleY: newH / o.height
+            });
+        }
+        const m = {
+            'inp-w': Math.round(o.width * o.scaleX),
+            'inp-h': Math.round(o.height * o.scaleY),
+            'inp-sx': o.scaleX.toFixed(2),
+            'inp-sy': o.scaleY.toFixed(2)
+        };
+        for (const [id, v] of Object.entries(m)) {
+            const el = document.getElementById(id);
+            if (el && document.activeElement !== el) el.value = v;
+        }
+    });
+
+    canvas.on('object:rotating', (e) => {
+        const o = e.target;
+        if (o.isBackgroundImage) return;
+        if (snapEnabled) {
+            const SNAP_ANGLE = 15;
+            o.set({
+                angle: Math.round(o.angle / SNAP_ANGLE) * SNAP_ANGLE
+            });
+        }
+        const el = document.getElementById('inp-angle');
+        if (el && document.activeElement !== el) el.value = Math.round(o.angle);
+    });
+
+    // ===== 13. ГОРЯЧИЕ КЛАВИШИ =====
+    document.addEventListener('keydown', (e) => {
+        const inInput = e.target.tagName === 'INPUT'
+            || e.target.tagName === 'TEXTAREA'
+            || e.target.tagName === 'SELECT';
+
+        // Ctrl+S работает даже в input
+        if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S' || e.key === 'ы' || e.key === 'Ы')) {
+            e.preventDefault();
+            saveProject();
+            return;
+        }
+
+        if (inInput) return;
+
+        // Ctrl+N — новый проект
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'n' || e.key === 'N' || e.key === 'т' || e.key === 'Т')) {
+            e.preventDefault();
+            openNewProjectDialog();
+            return;
+        }
+        // L — показать/скрыть привязки
+if (e.key === 'l' || e.key === 'L' || e.key === 'д' || e.key === 'Д') {
+    e.preventDefault();
+    toggleParentingLinks();
+    return;
+}
+        // Ctrl+O — открыть
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'o' || e.key === 'O' || e.key === 'щ' || e.key === 'Щ')) {
+            e.preventDefault();
+            document.getElementById('load-input').click();
+            return;
+        }
+        // Ctrl+E — экспорт
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'e' || e.key === 'E' || e.key === 'у' || e.key === 'У')) {
+            e.preventDefault();
+            openExportModal();
+            return;
+        }
+
+        // Ctrl+P — привязать к объекту
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P' || e.key === 'з' || e.key === 'З')) {
+            e.preventDefault();
+            setParent();
+            return;
+        }
+
+        // Ctrl+I — добавить изображение
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'i' || e.key === 'I' || e.key === 'ш' || e.key === 'Ш')) {
+            e.preventDefault();
+            document.getElementById('file-input').click();
+            return;
+        }
+        // Ctrl+D — дублировать
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'd' || e.key === 'D' || e.key === 'в' || e.key === 'В')) {
+            e.preventDefault();
+            duplicateActiveObject();
+            return;
+        }
+
+        // F6 — записать кадр
+        if (e.key === 'F6') {
+            e.preventDefault();
+            addKeyframe();
+            return;
+        }
+
+        // Space — Play/Pause
+        if (e.code === 'Space') {
+            e.preventDefault();
+            togglePlay();
+            return;
+        }
+        // Home — в начало
+        if (e.key === 'Home') {
+            e.preventDefault();
+            goToStart();
+            return;
+        }
+        // End — в конец
+        if (e.key === 'End') {
+            e.preventDefault();
+            goToEnd();
+            return;
+        }
+
+        // H — видимость
+        if (e.key === 'h' || e.key === 'H' || e.key === 'р' || e.key === 'Р') {
+            toggleActiveVisibility();
+            return;
+        }
+        // G — сетка
+        if (e.key === 'g' || e.key === 'G' || e.key === 'п' || e.key === 'П') {
+            e.preventDefault();
+            document.getElementById('btn-grid').click();
+            return;
+        }
+        // S — магнит (без Ctrl)
+        if ((e.key === 's' || e.key === 'S' || e.key === 'ы' || e.key === 'Ы')
+            && !e.ctrlKey && !e.metaKey) {
+            e.preventDefault();
+            document.getElementById('btn-snap').click();
+            return;
+        }
+
+        // Delete/Backspace — удалить кадр или объект
+        if (e.key === 'Delete' || e.key === 'Backspace') {
+            if (selectedKeyframe) {
+                e.preventDefault();
+                const { obj, time } = selectedKeyframe;
+                if (confirm(`Удалить ключевой кадр @ ${time.toFixed(2)}s?`)) {
+                    deleteKeyframe(obj, time);
+                }
+            } else if (canvas.getActiveObject() && !canvas.getActiveObject().isBackgroundImage) {
+                e.preventDefault();
+                deleteActiveObject();
+            }
+        }
+                // Ctrl+Z — Undo
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z' || e.key === 'я' || e.key === 'Я')) {
+            e.preventDefault();
+            undo();
+            return;
+        }
+        // Ctrl+Y или Ctrl+Shift+Z — Redo
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || e.key === 'Y' || e.key === 'н' || e.key === 'Н' || e.shiftKey && (e.key === 'z' || e.key === 'Z' || e.key === 'я' || e.key === 'Я'))) {
+            e.preventDefault();
+            redo();
+            return;
+        }
+
+    });
+
+    // ===== 14. ЗАКРЫТИE EASING POPUP =====
+    document.addEventListener('click', (e) => {
+        const popup = document.getElementById('easing-popup');
+        if (popup.classList.contains('show')
+            && !popup.contains(e.target)
+            && !e.target.closest('.animation-segment')) {
+            popup.classList.remove('show');
+        }
+
+        const menu = document.getElementById('context-menu');
+        if (menu && menu.style.display === 'block' && !menu.contains(e.target)) {
+            menu.style.display = 'none';
+        }
+    });
+
+    // ===== 15. ПЕРВИЧНЫЙ РЕНДЕР =====
+    renderTimeline();
+    updatePlayhead();
+    updateInspector();
+    updateGridOverlay();
+
+    console.log('%c✔ Minimal Animation Studio загружен', 'color:#50c878;font-weight:bold;');
+});
+
+
+======================================================================
+FILE: ./js/objects/layers.js
+======================================================================
+
+ 
+// ================= Z-ПОРОДОК (СЛОИ) =================
+
+function bringToFront() {
+    const obj = canvas.getActiveObject();
+    if (!obj || obj.isBackgroundImage) return;
+    canvas.bringToFront(obj);
+    canvas.renderAll();
+    saveState();
+    toast('На передний план', 'success', 1000);
+}
+
+function sendToBack() {
+    const obj = canvas.getActiveObject();
+    if (!obj || obj.isBackgroundImage) return;
+    canvas.sendToBack(obj);
+
+    // Гарантируем, что фон всегда остается самым нижним (индекс 0)
+    const bg = canvas.getObjects().find(o => o.isBackgroundImage);
+    if (bg) {
+        canvas.sendToBack(bg);
+    }
+    canvas.renderAll();
+    saveState();
+    toast('На задний план', 'success', 1000);
+}
+
+function bringForward() {
+    const obj = canvas.getActiveObject();
+    if (!obj || obj.isBackgroundImage) return;
+    canvas.bringForward(obj);
+    canvas.renderAll();
+    saveState();
+}
+
+function sendBackward() {
+    const obj = canvas.getActiveObject();
+    if (!obj || obj.isBackgroundImage) return;
+    canvas.sendBackwards(obj);
+
+    const bg = canvas.getObjects().find(o => o.isBackgroundImage);
+    if (bg && canvas.getObjects().indexOf(obj) === 0) {
+        canvas.bringForward(obj); // Не даем уйти ниже фона
+    }
+    canvas.renderAll();
+    saveState();
+}
+
+
+======================================================================
+FILE: ./js/objects/background.js
+======================================================================
+
+ 
+// ================= ФОН =================
+
+let bgMode = 'color';
+let bgColor = '#ffffff';
+let bgImageObj = null;
+let bgImageDataURL = null;
+
+async function applyBackground(mode, color, file) {
+    if (bgImageObj) {
+        canvas.remove(bgImageObj);
+        bgImageObj = null;
+        bgImageDataURL = null;
+    }
+
+    if (mode === 'color') {
+        canvas.backgroundColor = color;
+        bgMode = 'color';
+        bgColor = color;
+    } else if (mode === 'transparent') {
+        canvas.backgroundColor = null;
+        bgMode = 'transparent';
+    } else if (mode === 'image' && file) {
+        canvas.backgroundColor = null;
+        await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                fabric.Image.fromURL(evt.target.result, (img) => {
+                    const scaleX = canvas.getWidth() / img.width;
+                    const scaleY = canvas.getHeight() / img.height;
+                    const scale = Math.max(scaleX, scaleY);
+                    img.set({
+                        left: 0, top: 0,
+                        scaleX: scale, scaleY: scale,
+                        selectable: false, evented: false,
+                        hasControls: false, hasBorders: false,
+                        lockMovementX: true, lockMovementY: true,
+                        lockScalingX: true, lockScalingY: true,
+                        lockRotation: true,
+                        isBackgroundImage: true
+                    });
+                    bgImageObj = img;
+                    bgImageDataURL = evt.target.result;
+                    canvas.add(img);
+                    canvas.sendToBack(img);
+                    canvas.renderAll();
+                    resolve();
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+        bgMode = 'image';
+    }
+    canvas.renderAll();
+}
+
+
+======================================================================
+FILE: ./js/objects/visibility.js
+======================================================================
+
+ 
+// ================= ВИДИМОСТЬ =================
+
+function toggleActiveVisibility() {
+    const obj = canvas.getActiveObject();
+    if (!obj) { toast('Нет выделенного объекта', 'info'); return; }
+    if (obj.isBackgroundImage) return;
+    obj.visible = !obj.visible;
+    canvas.renderAll();
+    updateInspector();
+    renderTrackLabels();
+    renderTracks();
+}
+
+
+======================================================================
+FILE: ./js/objects/manager.js
+======================================================================
+
+ 
+// ================= УПРАВЛЕНИЕ ОБЪЕКТАМИ =================
+
+let objectCounter = 0;
+
+function addImageFromFile(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            fabric.Image.fromURL(evt.target.result, (img) => {
+                objectCounter++;
+                img.scaleToWidth(200);
+                img.set({ left: 100, top: 100, visible: true });
+                img.keyframes = {};
+                img.objId = 'obj_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+                img.objName = `${file.name.replace(/\.[^/.]+$/, '')} ${objectCounter}`;
+                img.objColor = TRACK_COLORS[(objectCounter - 1) % TRACK_COLORS.length];
+                img.objType = 'image';
+                img.originalFileName = file.name;
+                img._sourceDataURL = evt.target.result;
+                canvas.add(img);
+                canvas.setActiveObject(img);
+                renderTimeline();
+                updateInspector();
+                resolve(img);
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function duplicateActiveObject() {
+    const obj = canvas.getActiveObject();
+    if (!obj) { toast('Нет выделенного объекта', 'info'); return; }
+    if (obj.isBackgroundImage) { toast('Фоновое изображение дублировать нельзя', 'info'); return; }
+    obj.clone(c => {
+        objectCounter++;
+        c.set({ left: obj.left+20, top: obj.top+20, visible: true });
+        c.objId = 'obj_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+        c.objName = (obj.objName||'Object')+' copy';
+        c.objColor = TRACK_COLORS[(objectCounter-1)%TRACK_COLORS.length];
+        c._sourceDataURL = obj._sourceDataURL;
+        c.keyframes = JSON.parse(JSON.stringify(obj.keyframes || {}));
+        canvas.add(c); canvas.setActiveObject(c); canvas.renderAll();
+        renderTimeline(); updateInspector();
+        toast('Объект дублирован', 'success', 1200);
+    });
+}
+
+function deleteActiveObject() {
+    const obj = canvas.getActiveObject();
+    if (!obj) { toast('Нет выделенного объекта', 'info'); return; }
+    if (obj.isBackgroundImage) { toast('Фоновое изображение нельзя удалить', 'info'); return; }
+    if (!confirm(`Удалить "${obj.objName}"?`)) return;
+    canvas.remove(obj); canvas.renderAll();
+    renderTimeline(); updateInspector();
+}
+
+
+======================================================================
+FILE: ./js/objects/parenting.js
+======================================================================
+
+// ================= ПРИВЯЗКА ОБЪЕКТОВ (PARENTING) =================
+
+// Устанавливаем родителя для выделенного объекта
+function setParent() {
+    const child = canvas.getActiveObject();
+    if (!child || child.isBackgroundImage) {
+        toast('Выберите дочерний объект', 'info');
+        return;
+    }
+
+    const objects = canvas.getObjects().filter(o => !o.isBackgroundImage && o !== child);
+    if (objects.length === 0) {
+        toast('Нет объектов для привязки', 'info');
+        return;
+    }
+
+    const menuItems = objects.map(obj => ({
+        label: obj.objName || 'Без имени',
+        action: () => {
+            child.parentId = obj.objId;
+            // Вычисляем и сохраняем локальные координаты дочернего относительно родителя
+            computeLocalTransform(child, obj);
+            canvas.renderAll();
+            updateInspector();
+            saveState();
+            toast(`Привязано к "${obj.objName}"`, 'success', 1500);
+        }
+    }));
+
+    menuItems.push({
+        label: '❌ Отвязать',
+        action: () => {
+            child.parentId = null;
+            delete child._localX;
+            delete child._localY;
+            delete child._localAngle;
+            delete child._localScaleX;
+            delete child._localScaleY;
+            canvas.renderAll();
+            updateInspector();
+            saveState();
+            toast('Привязка удалена', 'success', 1500);
+        }
+    });
+
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    showContextMenu(centerX, centerY, menuItems);
+}
+
+// Вычисление локальных координат дочернего относительно родителя
+function computeLocalTransform(child, parent) {
+    // Получаем глобальную позицию дочернего
+    const globalPoint = { x: child.left, y: child.top };
+
+    // Преобразуем в локальные координаты родителя через обратную матрицу
+    const parentMatrix = parent.calcTransformMatrix();
+    const inverseMatrix = fabric.util.invertTransform(parentMatrix);
+    const localPoint = fabric.util.transformPoint(globalPoint, inverseMatrix);
+
+    child._localX = localPoint.x;
+    child._localY = localPoint.y;
+    child._localAngle = child.angle - parent.angle;
+    child._localScaleX = child.scaleX / parent.scaleX;
+    child._localScaleY = child.scaleY / parent.scaleY;
+}
+
+// Получение родителя объекта
+function getParent(obj) {
+    if (!obj.parentId) return null;
+    return canvas.getObjects().find(o => o.objId === obj.parentId);
+}
+
+// Получение всех дочерних объектов
+function getChildren(obj) {
+    return canvas.getObjects().filter(o => o.parentId === obj.objId);
+}
+
+// Применение трансформации родителя к дочерним объектам (ПРАВИЛЬНАЯ МАТЕМАТИКА)
+function applyParentTransforms() {
+    canvas.getObjects().forEach(obj => {
+        if (obj.isBackgroundImage || !obj.parentId) return;
+
+        const parent = getParent(obj);
+        if (!parent) return;
+
+        // Если локальные координаты не инициализированы — вычисляем их
+        if (obj._localX === undefined || obj._localY === undefined) {
+            computeLocalTransform(obj, parent);
+        }
+
+        // Получаем матрицу трансформации родителя
+        const parentMatrix = parent.calcTransformMatrix();
+
+        // Преобразуем локальную позицию дочернего в глобальную через матрицу родителя
+        const localPoint = { x: obj._localX, y: obj._localY };
+        const globalPoint = fabric.util.transformPoint(localPoint, parentMatrix);
+
+        // Применяем трансформацию
+        obj.set({
+            left: globalPoint.x,
+            top: globalPoint.y,
+            angle: parent.angle + obj._localAngle,
+            scaleX: parent.scaleX * obj._localScaleX,
+            scaleY: parent.scaleY * obj._localScaleY
+        });
+        obj.setCoords();
+    });
+}
+
+// Перехватываем applyStateAtTime для применения привязок при анимации
+const _originalApplyStateAtTime = applyStateAtTime;
+applyStateAtTime = function(time) {
+    _originalApplyStateAtTime(time);
+    applyParentTransforms();
+    canvas.renderAll();
+};
+
+// Инициализация событий привязки
+function initParentingEvents() {
+    // При перемещении родителя — пересчитываем локальные координаты дочерних
+    canvas.on('object:moving', (e) => {
+        const parent = e.target;
+        if (parent.isBackgroundImage) return;
+
+        const children = getChildren(parent);
+        children.forEach(child => {
+            // Пересчитываем локальные координаты при каждом движении
+            computeLocalTransform(child, parent);
+        });
+    });
+
+    // При масштабировании родителя
+    canvas.on('object:scaling', (e) => {
+        const parent = e.target;
+        if (parent.isBackgroundImage) return;
+
+        const children = getChildren(parent);
+        children.forEach(child => {
+            computeLocalTransform(child, parent);
+        });
+    });
+
+    // При вращении родителя
+    canvas.on('object:rotating', (e) => {
+        const parent = e.target;
+        if (parent.isBackgroundImage) return;
+
+        const children = getChildren(parent);
+        children.forEach(child => {
+            computeLocalTransform(child, parent);
+        });
+    });
+
+    // При завершении трансформации — сохраняем состояние
+    canvas.on('object:modified', (e) => {
+        const parent = e.target;
+        if (parent.isBackgroundImage) return;
+
+        const children = getChildren(parent);
+        children.forEach(child => {
+            computeLocalTransform(child, parent);
+        });
+        saveState();
+    });
+}
+
+
+======================================================================
+FILE: ./js/objects/pivot.js
+======================================================================
+
+// ================= ЦЕНТР ВРАЩЕНИЯ (PIVOT POINT) =================
+
+(function addPivotControl() {
+    const pivotControl = new fabric.Control({
+        x: 0,
+        y: 0,
+        cursorStyle: 'move',
+
+        actionHandler: function(eventData, transform, x, y) {
+            const obj = transform.target;
+            const pointer = canvas.getPointer(eventData);
+
+            const localPoint = fabric.util.transformPoint(
+                { x: pointer.x, y: pointer.y },
+                fabric.util.invertTransform(obj.calcTransformMatrix())
+            );
+
+            const newPivotX = (localPoint.x / obj.width) + 0.5;
+            const newPivotY = (localPoint.y / obj.height) + 0.5;
+
+            obj.set({
+                pivotX: newPivotX,
+                pivotY: newPivotY
+            });
+
+            obj.setCoords();
+            canvas.renderAll();
+            return true;
+        },
+
+        positionHandler: function(dim, finalMatrix, fabricObject) {
+            const px = fabricObject.pivotX !== undefined ? fabricObject.pivotX : 0.5;
+            const py = fabricObject.pivotY !== undefined ? fabricObject.pivotY : 0.5;
+
+            const offsetX = (px - 0.5) * fabricObject.width;
+            const offsetY = (py - 0.5) * fabricObject.height;
+
+            const objCanvas = fabricObject.canvas || canvas;
+            if (!objCanvas || !objCanvas.viewportTransform) {
+                return fabric.util.transformPoint(
+                    { x: offsetX, y: offsetY },
+                    fabricObject.calcTransformMatrix()
+                );
+            }
+
+            return fabric.util.transformPoint(
+                { x: offsetX, y: offsetY },
+                fabric.util.multiplyTransformMatrices(
+                    objCanvas.viewportTransform,
+                    fabricObject.calcTransformMatrix()
+                )
+            );
+        },
+
+        mouseUpHandler: function() {
+            saveState();
+            return true;
+        },
+
+        render: function(ctx, left, top, styleOverride, fabricObject) {
+            ctx.save();
+            ctx.translate(left, top);
+
+            ctx.fillStyle = '#ff6b6b';
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, 0, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(-10, 0); ctx.lineTo(10, 0);
+            ctx.moveTo(0, -10); ctx.lineTo(0, 10);
+            ctx.strokeStyle = '#ff6b6b';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.restore();
+        }
+    });
+
+    fabric.Object.prototype.controls.pivotControl = pivotControl;
+})();
+
+function resetPivotToCenter() {
+    const obj = canvas.getActiveObject();
+    if (!obj || obj.isBackgroundImage) return;
+    obj.set({ pivotX: 0.5, pivotY: 0.5 });
+    obj.setCoords();
+    canvas.renderAll();
+    saveState();
+    toast('Центр вращения сброшен', 'success', 1000);
+}
+
+function initPivotEvents() {
+    let isRotatingWithCustomPivot = false;
+    let initialPivotCanvasPoint = { x: 0, y: 0 };
+
+    canvas.on('mouse:down', (e) => {
+        if (e.target && e.transform && e.transform.action === 'rotate') {
+            const obj = e.target;
+            const px = obj.pivotX !== undefined ? obj.pivotX : 0.5;
+            const py = obj.pivotY !== undefined ? obj.pivotY : 0.5;
+
+            // Если pivot смещен от центра, включаем компенсацию
+            if (px !== 0.5 || py !== 0.5) {
+                isRotatingWithCustomPivot = true;
+
+                const centerX = obj.left + obj.width / 2;
+                const centerY = obj.top + obj.height / 2;
+                const localPivotX = (px - 0.5) * obj.width;
+                const localPivotY = (py - 0.5) * obj.height;
+
+                const angleRad = obj.angle * Math.PI / 180;
+                const cos = Math.cos(angleRad);
+                const sin = Math.sin(angleRad);
+                const rotatedPivotX = localPivotX * cos - localPivotY * sin;
+                const rotatedPivotY = localPivotX * sin + localPivotY * cos;
+
+                initialPivotCanvasPoint = {
+                    x: centerX + rotatedPivotX,
+                    y: centerY + rotatedPivotY
+                };
+            }
+        }
+    });
+
+    canvas.on('object:rotating', (e) => {
+        if (!isRotatingWithCustomPivot) return;
+        const obj = e.target;
+
+        const px = obj.pivotX !== undefined ? obj.pivotX : 0.5;
+        const py = obj.pivotY !== undefined ? obj.pivotY : 0.5;
+
+        const centerX = obj.left + obj.width / 2;
+        const centerY = obj.top + obj.height / 2;
+        const localPivotX = (px - 0.5) * obj.width;
+        const localPivotY = (py - 0.5) * obj.height;
+
+        const angleRad = obj.angle * Math.PI / 180;
+        const cos = Math.cos(angleRad);
+        const sin = Math.sin(angleRad);
+        const rotatedPivotX = localPivotX * cos - localPivotY * sin;
+        const rotatedPivotY = localPivotX * sin + localPivotY * cos;
+
+        const currentPivotX = centerX + rotatedPivotX;
+        const currentPivotY = centerY + rotatedPivotY;
+
+        const offsetX = initialPivotCanvasPoint.x - currentPivotX;
+        const offsetY = initialPivotCanvasPoint.y - currentPivotY;
+
+        obj.left += offsetX;
+        obj.top += offsetY;
+
+        obj.setCoords();
+    });
+
+    canvas.on('mouse:up', () => {
+        if (isRotatingWithCustomPivot) {
+            isRotatingWithCustomPivot = false;
+            saveState();
+        }
+    });
+}
+
+
+======================================================================
+FILE: ./js/animation/playback.js
+======================================================================
+
+ 
+// ================= ВОСПРОИЗВЕДЕНИЕ =================
+
+let isPlaying = false;
+let lastTimestamp = 0;
+
+function togglePlay() {
+    isPlaying = !isPlaying;
+    document.getElementById('btn-play').innerText = isPlaying ? '⏸' : '▶';
+    if (isPlaying) {
+        if (currentTime >= DURATION) currentTime = 0;
+        lastTimestamp = 0;
+        requestAnimationFrame(animate);
+    }
+}
+
+function goToStart() {
+    currentTime = 0;
+    updatePlayhead();
+    applyStateAtTime(currentTime);
+    renderTracks();
+    updateInspector();
+    updateKfStatus();
+}
+
+function goToEnd() {
+    currentTime = DURATION;
+    updatePlayhead();
+    applyStateAtTime(currentTime);
+    renderTracks();
+    updateInspector();
+    updateKfStatus();
+}
+
+function animate(timestamp) {
+    if (!isPlaying) return;
+    if (!lastTimestamp) lastTimestamp = timestamp;
+    const delta = (timestamp - lastTimestamp) / 1000;
+    lastTimestamp = timestamp;
+    currentTime += delta;
+    if (currentTime > DURATION) currentTime = 0;
+    updatePlayhead(false);
+    applyStateAtTime(currentTime);
+    if (!animate._lastRender || timestamp - animate._lastRender > 100) {
+        animate._lastRender = timestamp;
+        renderTracks();
+        updateKfStatus();
+        updateInspector();
+    }
+    requestAnimationFrame(animate);
+}
+
+
+======================================================================
+FILE: ./js/animation/interpolation.js
+======================================================================
+
+// ================= ИНТЕРПОЛЯЦИЯ =================
+
+function applyStateAtTime(time) {
+    canvas.getObjects().forEach(obj => {
+        if (obj.isBackgroundImage) return;
+        if (!obj.keyframes) return;
+        const times = Object.keys(obj.keyframes).map(Number).sort((a, b) => a - b);
+        if (times.length === 0) return;
+
+        const clamp = (kf) => {
+            obj.set({
+                left: kf.left !== undefined ? kf.left : obj.left,
+                top: kf.top !== undefined ? kf.top : obj.top,
+                angle: kf.angle !== undefined ? kf.angle : obj.angle,
+                scaleX: kf.scaleX !== undefined ? kf.scaleX : obj.scaleX,
+                scaleY: kf.scaleY !== undefined ? kf.scaleY : obj.scaleY,
+                opacity: (kf.opacity !== undefined && kf.opacity !== null) ? kf.opacity : 1,
+                visible: (kf.visible !== undefined && kf.visible !== null) ? kf.visible : true
+            });
+
+            // Компенсация pivot для крайних кадров
+            if (kf.pivotGlobalX !== undefined && kf.pivotGlobalY !== undefined) {
+                applyPivotCompensation(obj, kf.pivotGlobalX, kf.pivotGlobalY);
+            }
+
+            obj.setCoords();
+        };
+
+        if (time <= times[0]) { clamp(obj.keyframes[times[0]]); return; }
+        if (time >= times[times.length - 1]) { clamp(obj.keyframes[times[times.length - 1]]); return; }
+
+        const nextTime = times.find(t => t > time);
+        const prevTime = times[times.indexOf(nextTime) - 1];
+        const progress = (time - prevTime) / (nextTime - prevTime);
+        const seg = obj.keyframes[nextTime].segment || { easing: 'linear' };
+        const ep = EASINGS[seg.easing](progress);
+        const p = obj.keyframes[prevTime], n = obj.keyframes[nextTime];
+
+        const pOp = p.opacity ?? 1;
+        const nOp = n.opacity ?? 1;
+
+        obj.set({
+            left: p.left !== undefined ? p.left + (n.left - p.left) * ep : obj.left,
+            top: p.top !== undefined ? p.top + (n.top - p.top) * ep : obj.top,
+            angle: p.angle !== undefined ? p.angle + (n.angle - p.angle) * ep : obj.angle,
+            scaleX: p.scaleX !== undefined ? p.scaleX + (n.scaleX - p.scaleX) * ep : obj.scaleX,
+            scaleY: p.scaleY !== undefined ? p.scaleY + (n.scaleY - p.scaleY) * ep : obj.scaleY,
+            opacity: pOp + (nOp - pOp) * ep,
+            visible: n.visible !== undefined ? n.visible : true
+        });
+
+        // Компенсация pivot при интерполяции
+        if (p.pivotGlobalX !== undefined && n.pivotGlobalX !== undefined) {
+            const interpPivotX = p.pivotGlobalX + (n.pivotGlobalX - p.pivotGlobalX) * ep;
+            const interpPivotY = p.pivotGlobalY + (n.pivotGlobalY - p.pivotGlobalY) * ep;
+            applyPivotCompensation(obj, interpPivotX, interpPivotY);
+        }
+
+        obj.setCoords();
+    });
+    canvas.renderAll();
+}
+
+// Функция компенсации pivot
+// Функция компенсации pivot
+function applyPivotCompensation(obj, targetPivotX, targetPivotY) {
+    const px = obj.pivotX !== undefined ? obj.pivotX : 0.5;
+    const py = obj.pivotY !== undefined ? obj.pivotY : 0.5;
+
+    // Если pivot в центре — компенсация не нужна
+    if (px === 0.5 && py === 0.5) return;
+
+    // Центр объекта (left/top — это верхний левый угол bounding box)
+    const centerX = obj.left + obj.width / 2;
+    const centerY = obj.top + obj.height / 2;
+
+    // Pivot в локальных координатах (относительно центра)
+    const localPivotX = (px - 0.5) * obj.width;
+    const localPivotY = (py - 0.5) * obj.height;
+
+    // Поворачиваем localPivot на текущий угол объекта
+    const angleRad = obj.angle * Math.PI / 180;
+    const cos = Math.cos(angleRad);
+    const sin = Math.sin(angleRad);
+    const rotatedPivotX = localPivotX * cos - localPivotY * sin;
+    const rotatedPivotY = localPivotX * sin + localPivotY * cos;
+
+    // Где сейчас находится pivot (без компенсации)
+    const currentPivotX = centerX + rotatedPivotX;
+    const currentPivotY = centerY + rotatedPivotY;
+
+    // Корректируем left/top так, чтобы pivot оказался в целевой позиции
+    const offsetX = targetPivotX - currentPivotX;
+    const offsetY = targetPivotY - currentPivotY;
+    obj.left += offsetX;
+    obj.top += offsetY;
+}
+
+
+======================================================================
+FILE: ./js/animation/keyframes.js
+======================================================================
+
+// ================= КЛЮЧЕВЫЕ КАДРЫ =================
+
+function addKeyframe() {
+    const obj = canvas.getActiveObject();
+    if (!obj || obj.isBackgroundImage) {
+        toast('Выберите объект на холсте', 'info');
+        return;
+    }
+    const existing = findNearestKeyframe(currentTime, obj);
+    let targetTime = currentTime;
+    if (existing && existing.distPx <= SNAP_PX) {
+        targetTime = existing.time;
+    } else {
+        targetTime = roundToStep(currentTime);
+    }
+    const existingData = obj.keyframes[targetTime];
+
+    // Вычисляем глобальные координаты pivot
+    const px = obj.pivotX !== undefined ? obj.pivotX : 0.5;
+    const py = obj.pivotY !== undefined ? obj.pivotY : 0.5;
+    const localPivot = {
+        x: (px - 0.5) * obj.width,
+        y: (py - 0.5) * obj.height
+    };
+    const globalPivot = fabric.util.transformPoint(localPivot, obj.calcTransformMatrix());
+
+    obj.keyframes[targetTime] = {
+        left: obj.left,
+        top: obj.top,
+        angle: obj.angle,
+        scaleX: obj.scaleX,
+        scaleY: obj.scaleY,
+        opacity: obj.opacity,
+        visible: obj.visible,
+        pivotGlobalX: globalPivot.x,
+        pivotGlobalY: globalPivot.y,
+        segment: existingData ? existingData.segment : { easing: 'linear' }
+    };
+
+    renderTimeline();
+    updateKfStatus();
+    updateTimelineKfButton();
+    saveState();
+    toast(`Кадр записан @ ${targetTime.toFixed(2)}s`, 'success', 1200);
+}
+
+function deleteKeyframe(obj, time) {
+    if (!obj.keyframes || !obj.keyframes[time]) return;
+    delete obj.keyframes[time];
+    if (selectedKeyframe && selectedKeyframe.obj === obj && Math.abs(selectedKeyframe.time - time) < 0.001) {
+        selectedKeyframe = null;
+    }
+    renderTimeline();
+    updateKfStatus();
+    updateTimelineKfButton();
+    saveState();
+}
+
+
+======================================================================
+FILE: ./js/animation/easing.js
+======================================================================
+
+ 
+// ================= EASING ФУНКЦИИ =================
+
+const EASINGS = {
+    linear:        t => t,
+    easeInQuad:    t => t * t,
+    easeOutQuad:   t => t * (2 - t),
+    easeInOutQuad: t => t < 0.5 ? 2*t*t : -1+(4-2*t)*t,
+    easeInCubic:   t => t*t*t,
+    easeOutCubic:  t => (--t)*t*t+1,
+    easeInOutCubic:t => t<0.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1
+};
+
+function buildMiniGraphSVG(easingName, color) {
+    const func = EASINGS[easingName];
+    let pts = [];
+    for (let i = 0; i <= 20; i++) {
+        const t = i / 20;
+        pts.push(`${(i/20)*100},${100 - func(t)*100}`);
+    }
+    return `<svg class="seg-graph" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="4" vector-effect="non-scaling-stroke"/>
+    </svg>`;
+}
+
+
+======================================================================
+FILE: ./js/ui/menubar.js
+======================================================================
+
+// ================= МЕНЮ =================
+
+function initMenu() {
+    const menuItems = document.querySelectorAll('.menu-item');
+    let activeMenu = null;
+
+    menuItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (item.classList.contains('open')) {
+                item.classList.remove('open');
+                activeMenu = null;
+            } else {
+                menuItems.forEach(m => m.classList.remove('open'));
+                item.classList.add('open');
+                activeMenu = item;
+            }
+        });
+
+        item.addEventListener('mouseenter', () => {
+            if (activeMenu && activeMenu !== item) {
+                menuItems.forEach(m => m.classList.remove('open'));
+                item.classList.add('open');
+                activeMenu = item;
+            }
+        });
+    });
+
+    document.addEventListener('click', () => {
+        menuItems.forEach(m => m.classList.remove('open'));
+        activeMenu = null;
+    });
+
+    document.querySelectorAll('.menu-entry').forEach(entry => {
+        entry.addEventListener('click', (e) => {
+            if (entry.classList.contains('disabled')) return;
+            e.stopPropagation();
+            const action = entry.dataset.action;
+            menuItems.forEach(m => m.classList.remove('open'));
+            activeMenu = null;
+            handleMenuAction(action);
+        });
+    });
+}
+
+function handleMenuAction(action) {
+    switch (action) {
+        case 'undo':
+          undo();
+            break;
+      case 'redo':
+          redo();
+          break;
+      case 'set-parent':
+setParent();
+break;
+      case 'toggle-parenting-links':
+          toggleParentingLinks();
+          break;
+        case 'new-project': openNewProjectDialog(); break;
+        case 'open-project': document.getElementById('load-input').click(); break;
+        case 'save-project': saveProject(); break;
+        case 'add-image': document.getElementById('file-input').click(); break;
+        case 'export': openExportModal(); break;
+        case 'duplicate': duplicateActiveObject(); break;
+        case 'delete-object': deleteActiveObject(); break;
+        case 'delete-keyframe':
+            if (selectedKeyframe) {
+                const { obj, time } = selectedKeyframe;
+                if (confirm(`Удалить ключевой кадр @ ${time.toFixed(2)}s?`)) {
+                    deleteKeyframe(obj, time);
+                }
+            } else {
+                toast('Сначала выделите ключевой кадр', 'info');
+            }
+            break;
+        case 'toggle-grid': document.getElementById('btn-grid').click(); break;
+        case 'toggle-snap': document.getElementById('btn-snap').click(); break;
+        case 'project-settings': openProjectSettings(); break;
+        case 'add-keyframe': addKeyframe(); break;
+        case 'toggle-visibility': toggleActiveVisibility(); break;
+        case 'play-pause': togglePlay(); break;
+        case 'go-start': goToStart(); break;
+        case 'go-end': goToEnd(); break;
+        case 'show-shortcuts': openModal('modal-shortcuts'); break;
+        case 'about': openModal('modal-about'); break;
+    }
+}
+
+
+======================================================================
+FILE: ./js/ui/inspector.js
+======================================================================
+
+
+// ================= ИНСПЕКТОР =================
+
+function updateInspector() {
+    const content = document.getElementById('inspector-content');
+    const obj = canvas.getActiveObject();
+    if (!obj || obj.isBackgroundImage) {
+        content.innerHTML = `<div id="no-selection">${obj && obj.isBackgroundImage ? 'Выбран фоновый объект<br><br>Его свойства нельзя редактировать' : 'Объект не выбран<br><br>Добавьте изображение или выделите объект на холсте'}</div>`;
+        return;
+    }
+    const w = (obj.width * obj.scaleX).toFixed(1);
+    const h = (obj.height * obj.scaleY).toFixed(1);
+    const isVisible = obj.visible !== false;
+
+    content.innerHTML = `
+        <div class="inspector-section">
+            <h4>Объект</h4>
+            <div class="prop-row"><label>Имя</label><input type="text" id="inp-name" value="${esc(obj.objName||'')}"></div>
+            <div class="prop-row"><label>Тип</label><input type="text" value="${obj.objType||'image'}" readonly style="color:var(--text-dim)"></div>
+            ${obj.originalFileName ? `<div class="prop-row"><label>Файл</label><input type="text" value="${esc(obj.originalFileName)}" readonly style="color:var(--text-dim)"></div>` : ''}
+            <div class="prop-row">
+                <label>Видимость</label>
+                <div class="visibility-indicator ${isVisible ? 'visible' : 'hidden'}" id="btn-toggle-vis" title="Клик — переключить (H)">
+                    ${isVisible ? '👁 Видим' : '🚫 Скрыт'}
+                </div>
+            </div>
+            ${obj.parentId ? `
+            <div class="prop-row">
+                <label>Родитель</label>
+                <input type="text" value="${esc(getParent(obj)?.objName || 'Не найден')}" readonly style="color:var(--text-dim); cursor:pointer;" onclick="setParent()" title="Клик — изменить привязку">
+            </div>
+            ` : ''}
+        </div>
+        <div class="inspector-section">
+            <h4>Трансформация</h4>
+            <div class="prop-row"><label>Позиция</label>
+                <div class="prop-pair">
+                    <div><span class="mini-label">X</span><input type="number" id="inp-x" value="${Math.round(obj.left)}" step="1"></div>
+                    <div><span class="mini-label">Y</span><input type="number" id="inp-y" value="${Math.round(obj.top)}" step="1"></div>
+                </div></div>
+            <div class="prop-row"><label>Размер</label>
+                <div class="prop-pair">
+                    <div><span class="mini-label">W</span><input type="number" id="inp-w" value="${Math.round(w)}" step="1" min="1"></div>
+                    <div><span class="mini-label">H</span><input type="number" id="inp-h" value="${Math.round(h)}" step="1" min="1"></div>
+                </div></div>
+            <div class="prop-row"><label>Поворот</label>
+                <div class="prop-pair"><div><span class="mini-label">°</span><input type="number" id="inp-angle" value="${Math.round(obj.angle)}" step="1"></div></div></div>
+            <div class="prop-row"><label>Масштаб</label>
+                <div class="prop-pair">
+                    <div><span class="mini-label">X</span><input type="number" id="inp-sx" value="${obj.scaleX.toFixed(2)}" step="0.05"></div>
+                    <div><span class="mini-label">Y</span><input type="number" id="inp-sy" value="${obj.scaleY.toFixed(2)}" step="0.05"></div>
+                </div></div>
+        </div>
+        <div class="inspector-section">
+            <h4>Внешний вид</h4>
+            <div class="prop-row"><label>Opacity</label><input type="number" id="inp-opacity" value="${obj.opacity.toFixed(2)}" step="0.05" min="0" max="1"></div>
+        </div>
+        <div class="inspector-section">
+            <h4>Анимация</h4>
+            <div class="prop-row"><label>Кадры</label><input type="text" value="${Object.keys(obj.keyframes||{}).length}" readonly style="color:var(--text-dim)"></div>
+        </div>
+        <div class="inspector-actions">
+            <button id="btn-z-front" title="На передний план">⬆️ Верх</button>
+            <button id="btn-z-back" title="На задний план">⬇️ Низ</button>
+        </div>
+        <div class="inspector-actions">
+            <button id="btn-reset-pivot" title="Сбросить центр вращения в центр объекта">🎯 Центр</button>
+        </div>
+        <div class="inspector-actions">
+            <button id="btn-duplicate">Дубликат</button>
+            <button id="btn-delete" class="danger">Удалить</button>
+        </div>
+
+                `;
+    bindInspectorEvents(obj);
+}
+
+function bindInspectorEvents(obj) {
+    const b = (id, fn) => { const el = document.getElementById(id); if (el) el.oninput = fn; };
+    b('inp-name', e => { obj.objName = e.target.value; renderTrackLabels(); });
+    b('inp-x', e => { obj.set('left', parseFloat(e.target.value)||0); obj.setCoords(); canvas.renderAll(); });
+    b('inp-y', e => { obj.set('top', parseFloat(e.target.value)||0); obj.setCoords(); canvas.renderAll(); });
+    b('inp-w', e => { obj.set('scaleX', (parseFloat(e.target.value)||1)/obj.width); obj.setCoords(); canvas.renderAll(); const s=document.getElementById('inp-sx'); if(s) s.value=obj.scaleX.toFixed(2); });
+    b('inp-h', e => { obj.set('scaleY', (parseFloat(e.target.value)||1)/obj.height); obj.setCoords(); canvas.renderAll(); const s=document.getElementById('inp-sy'); if(s) s.value=obj.scaleY.toFixed(2); });
+    b('inp-angle', e => { obj.set('angle', parseFloat(e.target.value)||0); obj.setCoords(); canvas.renderAll(); });
+    b('inp-sx', e => { obj.set('scaleX', parseFloat(e.target.value)||0.01); obj.setCoords(); canvas.renderAll(); const w=document.getElementById('inp-w'); if(w) w.value=Math.round(obj.width*obj.scaleX); });
+    b('inp-sy', e => { obj.set('scaleY', parseFloat(e.target.value)||0.01); obj.setCoords(); canvas.renderAll(); const h=document.getElementById('inp-h'); if(h) h.value=Math.round(obj.height*obj.scaleY); });
+    b('inp-opacity', e => {
+        let v = parseFloat(e.target.value);
+        if (isNaN(v)) v = 1;
+        obj.set('opacity', Math.max(0, Math.min(1, v)));
+        canvas.renderAll();
+    });
+
+    const btnVis = document.getElementById('btn-toggle-vis');
+    if (btnVis) {
+        btnVis.onclick = () => {
+            obj.visible = !obj.visible;
+            canvas.renderAll();
+            updateInspector();
+            renderTrackLabels();
+            renderTracks();
+        };
+    }
+
+    document.getElementById('btn-duplicate').onclick = duplicateActiveObject;
+    document.getElementById('btn-delete').onclick = deleteActiveObject;
+    document.getElementById('btn-reset-pivot').onclick = resetPivotToCenter;
+    document.getElementById('btn-z-front').onclick = bringToFront;
+    document.getElementById('btn-z-back').onclick = sendToBack;
+    document.getElementById('btn-duplicate').onclick = () => {
+        duplicateActiveObject();
+        saveState(); // Сохраняем в историю после дублирования
+    };
+    document.getElementById('btn-delete').onclick = () => {
+        deleteActiveObject();
+        saveState(); // Сохраняем в историю после удаления
+    };
+}
+
+
+======================================================================
+FILE: ./js/ui/timeline.js
+======================================================================
+
+ 
+// ================= TIMELINE =================
+
+let currentTime = 0;
+let selectedKeyframe = null;
+
+function renderTimeline() {
+    renderRuler();
+    renderTrackLabels();
+    renderTracks();
+    updateKfStatus();
+    document.getElementById('timeline-info').textContent = `Длительность: ${DURATION} сек | Шаг: ${TIME_STEP.toFixed(2)} сек`;
+}
+
+function renderRuler() {
+    const ruler = document.getElementById('time-ruler');
+    ruler.innerHTML = '';
+    const totalWidth = DURATION * PX_PER_SEC;
+    document.getElementById('timeline-content').style.width = `${totalWidth}px`;
+    document.getElementById('tracks-area').style.width = `${totalWidth}px`;
+    ruler.style.width = `${totalWidth}px`;
+
+    for (let i = 0; i <= DURATION; i++) {
+        const mark = document.createElement('div');
+        mark.className = 'ruler-mark';
+        mark.style.left = `${i * PX_PER_SEC}px`;
+        mark.innerText = `${i}s`;
+        ruler.appendChild(mark);
+    }
+}
+
+function renderTrackLabels() {
+    const list = document.getElementById('track-labels-list');
+    list.innerHTML = '';
+    const objects = canvas.getObjects().filter(o => !o.isBackgroundImage);
+    const selected = canvas.getActiveObject();
+    objects.forEach(obj => {
+        const label = document.createElement('div');
+        label.className = 'track-label' + (obj === selected ? ' selected' : '');
+        const isVisible = obj.visible !== false;
+        label.innerHTML = `
+            <div class="track-icon" style="background:${obj.objColor || '#888'}"></div>
+            <div class="track-eye ${isVisible ? '' : 'hidden'}" title="${isVisible ? 'Скрыть (H)' : 'Показать (H)'}">
+                ${isVisible ? '👁' : '🚫'}
+            </div>
+            <div class="track-name" title="${obj.objName}">${obj.objName}</div>`;
+
+        const eyeEl = label.querySelector('.track-eye');
+        eyeEl.onclick = (e) => {
+            e.stopPropagation();
+            obj.visible = !obj.visible;
+            canvas.renderAll();
+            updateInspector();
+            renderTrackLabels();
+            renderTracks();
+        };
+
+        label.onclick = () => {
+            canvas.setActiveObject(obj);
+            canvas.renderAll();
+            updateInspector();
+            renderTrackLabels();
+            renderTracks();
+        };
+        list.appendChild(label);
+    });
+}
+
+function renderTracks() {
+    const area = document.getElementById('tracks-area');
+    area.innerHTML = '';
+    const objects = canvas.getObjects().filter(o => !o.isBackgroundImage);
+    const selected = canvas.getActiveObject();
+
+    const gridContainer = document.createElement('div');
+    gridContainer.style.cssText = 'position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none;z-index:0;';
+    for (let t = 0; t <= DURATION; t += GRID_MINOR_STEP) {
+        const line = document.createElement('div');
+        const isMajor = Math.abs(t - Math.round(t)) < 0.001;
+        line.className = 'grid-line ' + (isMajor ? 'major' : 'minor');
+        line.style.left = `${t * PX_PER_SEC}px`;
+        gridContainer.appendChild(line);
+    }
+    area.appendChild(gridContainer);
+
+    objects.forEach((obj) => {
+        const row = document.createElement('div');
+        row.className = 'track-row' + (obj === selected ? ' selected' : '');
+        row.style.height = `${TRACK_HEIGHT}px`;
+        row.style.position = 'relative';
+
+        if (obj.keyframes) {
+            const times = Object.keys(obj.keyframes).map(Number).sort((a, b) => a - b);
+
+            for (let i = 0; i < times.length - 1; i++) {
+                const st = times[i], et = times[i + 1];
+                const startKf = obj.keyframes[st];
+                const endKf = obj.keyframes[et];
+                const seg = endKf.segment || { easing: 'linear' };
+
+                const startVisible = startKf.visible !== undefined ? startKf.visible : true;
+                const endVisible = endKf.visible !== undefined ? endKf.visible : true;
+
+                if (!startVisible && !endVisible) {
+                    const hiddenEl = document.createElement('div');
+                    hiddenEl.className = 'hidden-segment';
+                    hiddenEl.style.left = `${st * PX_PER_SEC + 6}px`;
+                    hiddenEl.style.width = `${Math.max(0, (et - st) * PX_PER_SEC - 12)}px`;
+                    hiddenEl.innerHTML = `<span class="hidden-label">СКРЫТ</span>`;
+                    row.appendChild(hiddenEl);
+                } else {
+                    const segEl = document.createElement('div');
+                    segEl.className = 'animation-segment';
+                    segEl.style.left = `${st * PX_PER_SEC + 6}px`;
+                    segEl.style.width = `${Math.max(0, (et - st) * PX_PER_SEC - 12)}px`;
+                    segEl.innerHTML = `<span class="seg-label">${seg.easing}</span>` +
+                                      buildMiniGraphSVG(seg.easing, obj.objColor || '#4a9eff');
+                    segEl.onclick = (e) => {
+                        e.stopPropagation();
+                        showEasingPopup(obj, et, segEl);
+                    };
+                    row.appendChild(segEl);
+                }
+            }
+
+            times.forEach(time => {
+                const kf = document.createElement('div');
+                kf.className = 'keyframe';
+                kf.style.left = `${time * PX_PER_SEC}px`;
+                kf.style.background = obj.objColor || '#ffcc00';
+                kf.title = `${obj.objName} @ ${time}s\nПКМ — удалить`;
+                kf.dataset.objId = obj.objId;
+                kf.dataset.time = time;
+
+                if (Math.abs(currentTime - time) < 0.001) kf.classList.add('active');
+                if (selectedKeyframe && selectedKeyframe.obj === obj && Math.abs(selectedKeyframe.time - time) < 0.001) {
+                    kf.classList.add('selected-kf');
+                }
+
+                kf.addEventListener('mousedown', (e) => {
+                    if (e.button !== 0) return;
+                    e.stopPropagation();
+                    e.preventDefault();
+                    kf.classList.add('dragging');
+                    const scrollEl = document.getElementById('timeline-scroll');
+                    const tracksRect = area.getBoundingClientRect();
+                    const originalTime = time;
+
+                    const onMove = (me) => {
+                        const x = me.clientX - tracksRect.left + scrollEl.scrollLeft;
+                        let newTime = (x / PX_PER_SEC);
+                        newTime = roundToStep(newTime);
+                        newTime = Math.max(0, Math.min(DURATION, newTime));
+                        const otherTimes = times.filter(t => Math.abs(t - originalTime) > 0.001);
+                        for (const ot of otherTimes) {
+                            if (Math.abs(newTime - ot) < TIME_STEP) {
+                                newTime = newTime < ot ? ot - TIME_STEP : ot + TIME_STEP;
+                            }
+                        }
+                        newTime = Math.max(0, Math.min(DURATION, roundToStep(newTime)));
+                        kf.style.left = `${newTime * PX_PER_SEC}px`;
+                        kf._dragTime = newTime;
+                    };
+
+                    const onUp = () => {
+                        document.removeEventListener('mousemove', onMove);
+                        document.removeEventListener('mouseup', onUp);
+                        kf.classList.remove('dragging');
+                        const newTime = kf._dragTime;
+                        if (newTime !== undefined && Math.abs(newTime - originalTime) > 0.001) {
+                            const data = obj.keyframes[originalTime];
+                            delete obj.keyframes[originalTime];
+                            obj.keyframes[newTime] = data;
+                            if (selectedKeyframe && selectedKeyframe.obj === obj && Math.abs(selectedKeyframe.time - originalTime) < 0.001) {
+                                selectedKeyframe = { obj, time: newTime };
+                            }
+                            renderTimeline();
+                        }
+                    };
+
+                    document.addEventListener('mousemove', onMove);
+                    document.addEventListener('mouseup', onUp);
+                });
+
+                kf.onclick = (e) => {
+                    e.stopPropagation();
+                    currentTime = time;
+                    selectedKeyframe = { obj, time };
+                    updatePlayhead();
+                    applyStateAtTime(currentTime);
+                    canvas.setActiveObject(obj);
+                    canvas.renderAll();
+                    updateInspector();
+                    renderTrackLabels();
+                    renderTracks();
+                    updateTimelineKfButton();
+                };
+
+                kf.oncontextmenu = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    selectedKeyframe = { obj, time };
+                    renderTracks();
+                    showContextMenu(e.clientX, e.clientY, [
+                        {
+                            label: 'Удалить кадр',
+                            shortcut: 'Del',
+                            danger: true,
+                            action: () => {
+                                if (confirm(`Удалить ключевой кадр @ ${time}s?`)) {
+                                    deleteKeyframe(obj, time);
+                                }
+                            }
+                        }
+                    ]);
+                };
+
+                row.appendChild(kf);
+            });
+        }
+        area.appendChild(row);
+    });
+}
+
+function updatePlayhead(snapped = false) {
+    const ph = document.getElementById('playhead');
+    ph.style.left = `${currentTime * PX_PER_SEC}px`;
+    if (snapped) ph.classList.add('snapped');
+    else ph.classList.remove('snapped');
+    document.getElementById('time-display').innerText = `${currentTime.toFixed(2)}s`;
+}
+
+function updateKfStatus() {
+    const status = document.getElementById('kf-status');
+    const active = canvas.getActiveObject();
+    let onKf = null;
+    if (active && active.keyframes) {
+        const nearest = findNearestKeyframe(currentTime, active);
+        if (nearest && nearest.distPx <= SNAP_PX) onKf = nearest;
+    }
+    if (onKf) {
+        status.textContent = `● На кадре @ ${onKf.time.toFixed(2)}s`;
+        status.className = 'on-kf';
+    } else if (selectedKeyframe) {
+        status.textContent = `◇ Выделен: ${selectedKeyframe.time.toFixed(2)}s`;
+        status.className = '';
+    } else {
+        status.textContent = `◌ Между кадрами`;
+        status.className = '';
+    }
+}
+
+function showEasingPopup(obj, endTime, segEl) {
+    const popup = document.getElementById('easing-popup');
+    const segment = obj.keyframes[endTime].segment || { easing: 'linear' };
+    popup.style.visibility = 'hidden';
+    popup.classList.add('show');
+    const rect = segEl.getBoundingClientRect();
+    const popRect = popup.getBoundingClientRect();
+    let top = rect.top - popRect.height - 8;
+    let left = rect.left + rect.width / 2 - popRect.width / 2;
+    if (top < 4) top = rect.bottom + 8;
+    if (left < 4) left = 4;
+    if (left + popRect.width > window.innerWidth - 4) left = window.innerWidth - popRect.width - 4;
+    popup.style.top = `${top}px`;
+    popup.style.left = `${left}px`;
+    popup.style.visibility = 'visible';
+
+    const list = document.getElementById('easing-list');
+    list.innerHTML = '';
+    Object.keys(EASINGS).forEach(name => {
+        const option = document.createElement('div');
+        option.className = 'easing-option' + (name === segment.easing ? ' selected' : '');
+        option.textContent = name;
+        option.onclick = (e) => {
+            e.stopPropagation();
+            segment.easing = name;
+            obj.keyframes[endTime].segment = segment;
+            renderTracks();
+            popup.classList.remove('show');
+        };
+        option.onmouseenter = () => updatePopupGraph(name);
+        list.appendChild(option);
+    });
+    updatePopupGraph(segment.easing);
+}
+
+function updatePopupGraph(easingName) {
+    const func = EASINGS[easingName];
+    let d = 'M 0 100 ';
+    for (let i = 0; i <= 100; i++) {
+        d += `L ${i} ${100 - func(i/100)*100} `;
+    }
+    document.getElementById('popup-graph-path').setAttribute('d', d);
+}
+
+function showContextMenu(x, y, items) {
+    let menuEl = document.getElementById('context-menu');
+    if (!menuEl) {
+        menuEl = document.createElement('div');
+        menuEl.id = 'context-menu';
+        menuEl.style.cssText = 'position:fixed;background:var(--bg-panel);border:1px solid var(--border);border-radius:4px;box-shadow:0 4px 15px rgba(0,0,0,0.5);z-index:1100;display:none;min-width:160px;padding:4px 0;';
+        document.body.appendChild(menuEl);
+    }
+    menuEl.innerHTML = '';
+    items.forEach(item => {
+        const el = document.createElement('div');
+        el.style.cssText = 'padding:6px 14px;font-size:12px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;';
+        if (item.danger) el.style.color = '#ff6b6b';
+        el.innerHTML = `<span>${item.label}</span>${item.shortcut ? `<span style="color:var(--text-dim);font-size:10px;margin-left:20px;">${item.shortcut}</span>` : ''}`;
+        el.onmouseenter = () => el.style.background = 'var(--accent)';
+        el.onmouseleave = () => el.style.background = '';
+        el.onclick = (e) => {
+            e.stopPropagation();
+            menuEl.style.display = 'none';
+            item.action();
+        };
+        menuEl.appendChild(el);
+    });
+    menuEl.style.left = `${x}px`;
+    menuEl.style.top = `${y}px`;
+    menuEl.style.display = 'block';
+}
+
+function initScrub() {
+    const ruler = document.getElementById('time-ruler');
+    let isScrubbing = false;
+
+    function scrubTo(e) {
+        const rect = ruler.getBoundingClientRect();
+        const scrollEl = document.getElementById('timeline-scroll');
+        const x = e.clientX - rect.left + scrollEl.scrollLeft;
+        let t = Math.max(0, Math.min(DURATION, x / PX_PER_SEC));
+        t = roundToStep(t);
+        const snap = snapTime(t);
+        currentTime = snap.time;
+        updatePlayhead(snap.snapped);
+        applyStateAtTime(currentTime);
+        renderTracks();
+        updateKfStatus();
+        updateTimelineKfButton();
+    }
+
+    ruler.addEventListener('mousedown', (e) => {
+        isScrubbing = true;
+        scrubTo(e);
+        document.body.style.cursor = 'col-resize';
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isScrubbing) return;
+        scrubTo(e);
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isScrubbing) {
+            isScrubbing = false;
+            document.body.style.cursor = '';
+        }
+    });
+}
+
+// ================= ДИНАМИЧЕСКАЯ КНОПКА КАДРА =================
+function updateTimelineKfButton() {
+    const btn = document.getElementById('btn-timeline-kf');
+    if (!btn) return;
+
+    const obj = canvas.getActiveObject();
+    if (!obj || obj.isBackgroundImage) {
+        btn.textContent = '◆ Добавить кадр';
+        btn.className = 'primary';
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.onclick = null;
+        return;
+    }
+
+    btn.disabled = false;
+    btn.style.opacity = '1';
+
+    const nearest = findNearestKeyframe(currentTime, obj);
+    if (nearest && nearest.distPx <= SNAP_PX) {
+        // Мы стоим на существующем кадре -> кнопка удаления
+        btn.textContent = '🗑️ Удалить кадр';
+        btn.className = 'danger';
+        btn.onclick = () => {
+            deleteKeyframe(obj, nearest.time);
+            updateTimelineKfButton();
+        };
+    } else {
+        // Мы между кадрами -> кнопка добавления
+        btn.textContent = '◆ Добавить кадр';
+        btn.className = 'primary';
+        btn.onclick = () => {
+            addKeyframe();
+            updateTimelineKfButton();
+        };
+    }
+}
+
+
+======================================================================
+FILE: ./js/ui/modals.js
+======================================================================
+
+// ================= МОДАЛЬНЫЕ ОКНА =================
+
+function openModal(id) {
+    document.getElementById(id).classList.add('show');
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('show');
+}
+
+function initModals() {
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                overlay.classList.remove('show');
+            }
+        });
+    });
+
+    setupBgModeTabs('modal-new-project');
+    setupBgModeTabs('modal-project-settings');
+    setupFileDrop('np-bg-drop', 'np-bg-file');
+    setupFileDrop('ps-bg-drop', 'ps-bg-file');
+}
+
+function setupBgModeTabs(modalId) {
+    const modal = document.getElementById(modalId);
+    const tabs = modal.querySelectorAll('.bg-mode-tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            setBgModeInModal(modalId, tab.dataset.mode);
+        });
+    });
+}
+
+function setBgModeInModal(modalId, mode) {
+    const modal = document.getElementById(modalId);
+    modal.querySelectorAll('.bg-mode-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.mode === mode);
+    });
+    modal.querySelectorAll('.bg-mode-panel').forEach(p => {
+        p.classList.toggle('active', p.dataset.panel === mode);
+    });
+    modal.dataset.currentMode = mode;
+}
+
+function setupFileDrop(dropId, fileId) {
+    const drop = document.getElementById(dropId);
+    const fileInput = document.getElementById(fileId);
+    let pendingFile = null;
+
+    drop.addEventListener('click', () => fileInput.click());
+    drop.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        drop.style.borderColor = 'var(--accent)';
+    });
+    drop.addEventListener('dragleave', () => {
+        drop.style.borderColor = '';
+    });
+    drop.addEventListener('drop', (e) => {
+        e.preventDefault();
+        drop.style.borderColor = '';
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            pendingFile = file;
+            drop.classList.add('has-file');
+            drop.textContent = `✓ ${file.name}`;
+            drop._pendingFile = file;
+        }
+    });
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            pendingFile = file;
+            drop.classList.add('has-file');
+            drop.textContent = `✓ ${file.name}`;
+            drop._pendingFile = file;
+        }
+        e.target.value = '';
+    });
+
+    drop._getPendingFile = () => pendingFile;
+    drop._clearPendingFile = () => {
+        pendingFile = null;
+        drop.classList.remove('has-file');
+        drop.textContent = '📁 Кликните или перетащите изображение';
+        drop._pendingFile = null;
+    };
+}
+
+function openExportModal() {
+    document.getElementById('export-width').value = canvas.getWidth();
+    openModal('modal-export');
+}
+
+
+======================================================================
+FILE: ./js/core/history.js
+======================================================================
+
+
+// ================= ИСТОРИЯ (UNDO / REDO) =================
+
+const MAX_HISTORY = 30;
+let historyStack = [];
+let redoStack = [];
+let isHistoryLocked = false; // Блокировка во время восстановления
+
+// Расширяем Fabric.js, чтобы он сохранял наши кастомные свойства в JSON
+fabric.Object.prototype.toObject = (function(toObject) {
+    return function(propertiesToInclude) {
+        return toObject.call(this, [
+            'objId', 'objName', 'objColor', 'objType',
+            'originalFileName', 'keyframes', 'isBackgroundImage',
+            'pivotX', 'pivotY', 'parentId',
+            ...(propertiesToInclude || [])
+        ]);
+    };
+})(fabric.Object.prototype.toObject);
+
+function saveState() {
+    if (isHistoryLocked) return;
+
+    // Очищаем redo при новом действии
+    redoStack = [];
+
+    const state = {
+        canvasJson: canvas.toJSON(),
+        currentTime,
+        DURATION,
+        TIME_STEP,
+        projectName,
+        bgMode,
+        bgColor
+    };
+
+    historyStack.push(state);
+    if (historyStack.length > MAX_HISTORY) {
+        historyStack.shift();
+    }
+        updateUndoRedoButtons();
+}
+
+function undo() {
+    if (historyStack.length <= 1) {
+        toast('Нечего отменять', 'info');
+        return;
+    }
+
+    isHistoryLocked = true;
+    const currentState = historyStack.pop();
+    redoStack.push(currentState);
+    const prevState = historyStack[historyStack.length - 1];
+
+    restoreState(prevState);
+    isHistoryLocked = false;
+    toast('Отменено', 'info', 1000);
+        updateUndoRedoButtons();
+}
+
+function redo() {
+    if (redoStack.length === 0) {
+        toast('Нечего возвращать', 'info');
+        return;
+    }
+
+    isHistoryLocked = true;
+    const nextState = redoStack.pop();
+    historyStack.push(nextState);
+
+    restoreState(nextState);
+    isHistoryLocked = false;
+    toast('Возвращено', 'info', 1000);
+        updateUndoRedoButtons();
+}
+
+function restoreState(state) {
+    canvas.loadFromJSON(state.canvasJson, () => {
+        currentTime = state.currentTime;
+        DURATION = state.DURATION;
+        TIME_STEP = state.TIME_STEP;
+        projectName = state.projectName;
+        bgMode = state.bgMode;
+        bgColor = state.bgColor;
+
+        // Обновляем UI
+        document.getElementById('inp-duration').value = DURATION;
+        document.getElementById('inp-step').value = TIME_STEP.toFixed(2);
+        document.getElementById('project-name').textContent = projectName;
+
+        canvas.renderAll();
+        renderTimeline();
+        updatePlayhead();
+        updateInspector();
+        updateGridOverlay();
+    });
+}
+
+function initHistory() {
+    // Сохраняем начальное состояние при загрузке
+    saveState();
+
+    // Триггеры для автосохранения состояния
+    canvas.on('object:added', () => setTimeout(saveState, 10));
+    canvas.on('object:removed', () => setTimeout(saveState, 10));
+    canvas.on('object:modified', () => setTimeout(saveState, 10));
+}
+// ================= ОБНОВЛЕНИЕ КНОПОК UNDO/REDO =================
+function updateUndoRedoButtons() {
+    const undoBtn = document.getElementById('btn-undo');
+    const redoBtn = document.getElementById('btn-redo');
+
+    if (undoBtn) {
+        undoBtn.disabled = historyStack.length <= 1;
+    }
+    if (redoBtn) {
+        redoBtn.disabled = redoStack.length === 0;
+    }
+}
+
+
+======================================================================
+FILE: ./js/core/config.js
+======================================================================
+
+ 
+// ================= КОНФИГУРАЦИЯ =================
+
+const PX_PER_SEC = 100;
+const TRACK_HEIGHT = 32;
+const SNAP_PX = 6;
+const GRID_MINOR_STEP = 0.25;
+const DEFAULT_DURATION = 5;
+const DEFAULT_TIME_STEP = 0.05;
+const DEFAULT_GRID_SIZE = 25;
+
+const TRACK_COLORS = ['#4a9eff','#ff6b9d','#50c878','#ffb347','#b19cd9','#77dd77','#ff6961'];
+
+
+======================================================================
+FILE: ./js/core/utils.js
+======================================================================
+
+ 
+// ================= УТИЛИТЫ =================
+
+function toast(message, type = 'info', duration = 2500) {
+    const container = document.getElementById('toast-container');
+    const el = document.createElement('div');
+    el.className = 'toast ' + type;
+    el.textContent = message;
+    container.appendChild(el);
+    setTimeout(() => {
+        el.style.transition = 'opacity 0.3s';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 300);
+    }, duration);
+}
+
+function roundToStep(time) {
+    return Math.round(time / TIME_STEP) * TIME_STEP;
+}
+
+function findNearestKeyframe(time, targetObj = null) {
+    const objects = targetObj ? [targetObj] : canvas.getObjects().filter(o => !o.isBackgroundImage);
+    let best = null;
+    let bestDist = Infinity;
+    objects.forEach(obj => {
+        if (!obj.keyframes) return;
+        Object.keys(obj.keyframes).forEach(tStr => {
+            const t = parseFloat(tStr);
+            const distPx = Math.abs(t - time) * PX_PER_SEC;
+            if (distPx < bestDist) {
+                bestDist = distPx;
+                best = { obj, time: t, distPx };
+            }
+        });
+    });
+    return best;
+}
+
+function snapTime(time) {
+    const nearest = findNearestKeyframe(time);
+    if (nearest && nearest.distPx <= SNAP_PX) {
+        return { time: nearest.time, snapped: true, obj: nearest.obj };
+    }
+    return { time, snapped: false };
+}
+
+function dataURLtoBlob(dataURL) {
+    const parts = dataURL.split(',');
+    const mime = parts[0].match(/:(.*?);/)[1];
+    const bstr = atob(parts[1]);
+    const n = bstr.length;
+    const u8 = new Uint8Array(n);
+    for (let i = 0; i < n; i++) u8[i] = bstr.charCodeAt(i);
+    return new Blob([u8], { type: mime });
+}
+
+function dataURLtoFile(dataURL, filename) {
+    const arr = dataURL.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    const u8arr = new Uint8Array(bstr.length);
+    for (let i = 0; i < bstr.length; i++) u8arr[i] = bstr.charCodeAt(i);
+    return new File([u8arr], filename, { type: mime });
+}
+
+function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+}
+
+
+======================================================================
+FILE: ./js/core/canvas.js
+======================================================================
+
+ 
+// ================= CANVAS =================
+
+let canvas;
+let gridOverlay;
+
+function initCanvas() {
+    canvas = new fabric.Canvas('c', {
+        backgroundColor: '#ffffff',
+        preserveObjectStacking: true
+    });
+
+    const canvasContainer = document.querySelector('.canvas-container');
+    gridOverlay = document.createElement('div');
+    gridOverlay.id = 'grid-overlay';
+    canvasContainer.appendChild(gridOverlay);
+}
+
+function updateGridOverlay() {
+    if (!gridEnabled) {
+        gridOverlay.classList.remove('show');
+        return;
+    }
+    gridOverlay.classList.add('show');
+    const w = canvas.getWidth();
+    const h = canvas.getHeight();
+    gridOverlay.style.width = w + 'px';
+    gridOverlay.style.height = h + 'px';
+    gridOverlay.style.backgroundImage = `
+        linear-gradient(to right, rgba(100, 150, 255, 0.3) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(100, 150, 255, 0.3) 1px, transparent 1px)
+    `;
+    gridOverlay.style.backgroundSize = `${gridSize}px ${gridSize}px`;
+}
+
+
+======================================================================
+FILE: ./js/export/gif.js
+======================================================================
+
+ 
+// ================= ЭКСПОРТ GIF =================
+
+async function exportToGIF(fps, quality, width, height, onProgress) {
+    const gif = new GIF({
+        workers: 2,
+        quality: 11 - quality,
+        width: width,
+        height: height,
+        workerScript: 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js'
+    });
+
+    const totalFrames = Math.ceil(DURATION * fps);
+    const frameDuration = 1000 / fps;
+
+    const savedTime = currentTime;
+    const savedPlaying = isPlaying;
+    isPlaying = false;
+
+    for (let i = 0; i < totalFrames; i++) {
+        const time = (i / fps);
+        currentTime = time;
+        applyStateAtTime(time);
+
+        const dataURL = canvas.toDataURL({
+            format: 'png',
+            multiplier: width / canvas.getWidth()
+        });
+
+        await new Promise(resolve => {
+            const img = new Image();
+            img.onload = () => {
+                gif.addFrame(img, { delay: frameDuration });
+                resolve();
+            };
+            img.src = dataURL;
+        });
+
+        onProgress((i / totalFrames) * 100);
+        await new Promise(r => setTimeout(r, 10));
+    }
+
+    currentTime = savedTime;
+    isPlaying = savedPlaying;
+    applyStateAtTime(currentTime);
+
+    return new Promise((resolve, reject) => {
+        gif.on('finished', (blob) => {
+            saveAs(blob, `${projectName}_${Date.now()}.gif`);
+            resolve();
+        });
+        gif.on('error', reject);
+        gif.render();
+    });
+}
+
+
+======================================================================
+FILE: ./js/export/video.js
+======================================================================
+
+// ================= ЭКСПОРТ ВИДЕО =================
+
+async function exportToVideo(format, fps, quality, width, height, onProgress) {
+    const canvasEl = document.createElement('canvas');
+    canvasEl.width = width;
+    canvasEl.height = height;
+    const ctx = canvasEl.getContext('2d');
+
+    // ИСПРАВЛЕНИЕ 1: Браузеры плохо поддерживают 'video/mp4' в MediaRecorder.
+    // Мы проверяем поддерживаемые форматы и выбираем лучший доступный (обычно video/webm).
+    // Файл всё равно будет работать в большинстве плееров.
+    const supportedMimeTypes = [
+        'video/webm;codecs=vp9',
+        'video/webm;codecs=vp8',
+        'video/webm',
+        'video/mp4'
+    ];
+
+    let mimeType = 'video/webm';
+    for (const type of supportedMimeTypes) {
+        if (MediaRecorder.isTypeSupported(type)) {
+            mimeType = type;
+            break;
+        }
+    }
+
+    const stream = canvasEl.captureStream(fps);
+    const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: mimeType,
+        videoBitsPerSecond: quality * 100000
+    });
+
+    const chunks = [];
+    mediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+            chunks.push(e.data);
+        }
+    };
+
+    const savedTime = currentTime;
+    const savedPlaying = isPlaying;
+    isPlaying = false;
+
+    const totalFrames = Math.ceil(DURATION * fps);
+    const frameDuration = 1000 / fps;
+
+    mediaRecorder.start();
+
+    for (let i = 0; i < totalFrames; i++) {
+        const time = (i / fps);
+        currentTime = time;
+        applyStateAtTime(time);
+
+        const dataURL = canvas.toDataURL({ format: 'png' });
+
+        // ИСПРАВЛЕНИЕ 2: Добавлен onerror, чтобы промис не зависал навсегда при сбое картинки
+        await new Promise(resolve => {
+            const img = new Image();
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve();
+            };
+            img.onerror = () => {
+                console.warn('Ошибка загрузки кадра для видео, пропускаем...');
+                resolve();
+            };
+            img.src = dataURL;
+        });
+
+        onProgress(Math.round((i / totalFrames) * 100));
+
+        // ИСПРАВЛЕНИЕ 3: Небольшая защита от слишком быстрого цикла
+        await new Promise(r => setTimeout(r, Math.max(10, frameDuration - 10)));
+    }
+
+    // Возвращаем исходное состояние холста
+    currentTime = savedTime;
+    isPlaying = savedPlaying;
+    applyStateAtTime(currentTime);
+
+    return new Promise((resolve, reject) => {
+        mediaRecorder.onstop = () => {
+            // ИСПРАВЛЕНИЕ 4: Проверка на пустой результат, чтобы не сохранять битый файл
+            if (chunks.length === 0) {
+                reject(new Error('Не удалось записать видео: поток данных пуст. Попробуйте другой браузер или формат WebM.'));
+                return;
+            }
+
+            const blob = new Blob(chunks, { type: mimeType });
+
+            // Определяем финальное расширение. Если браузер не смог в mp4, сохраняем как webm
+            const finalFormat = (format === 'mp4' && mimeType.includes('mp4')) ? 'mp4' : 'webm';
+
+            saveAs(blob, `${projectName}_${Date.now()}.${finalFormat}`);
+            resolve();
+        };
+
+        mediaRecorder.onerror = (e) => {
+            console.error('MediaRecorder error:', e);
+            reject(new Error('Ошибка записи видео: ' + e.message));
+        };
+
+        mediaRecorder.stop();
+    });
+}
+
+
+======================================================================
+FILE: ./js/project/new.js
+======================================================================
+
+// ================= НОВЫЙ ПРОЕКТ =================
+
+let projectName = 'Без названия';
+let DURATION = DEFAULT_DURATION;
+let TIME_STEP = DEFAULT_TIME_STEP;
+let gridEnabled = false;
+let snapEnabled = false;
+let gridSize = DEFAULT_GRID_SIZE;
+
+function openNewProjectDialog() {
+    document.getElementById('np-name').value = projectName;
+    document.getElementById('np-width').value = canvas.getWidth();
+    document.getElementById('np-height').value = canvas.getHeight();
+    document.getElementById('np-duration').value = DURATION;
+    document.getElementById('np-bg-color').value = bgColor || '#ffffff';
+    setBgModeInModal('modal-new-project', 'color');
+    const drop = document.getElementById('np-bg-drop');
+    drop._clearPendingFile();
+    openModal('modal-new-project');
+}
+
+async function createNewProject(opts) {
+    canvas.clear();
+    objectCounter = 0;
+    selectedKeyframe = null;
+    currentTime = 0;
+    isPlaying = false;
+    document.getElementById('btn-play').innerText = '▶';
+
+    projectName = opts.name;
+    document.getElementById('project-name').textContent = projectName;
+
+    canvas.setWidth(opts.width);
+    canvas.setHeight(opts.height);
+
+    DURATION = opts.duration;
+    document.getElementById('inp-duration').value = DURATION;
+
+    bgMode = opts.bgMode;
+    bgColor = opts.bgColor;
+    bgImageObj = null;
+    bgImageDataURL = null;
+
+    await applyBackground(opts.bgMode, opts.bgColor, opts.bgFile);
+
+    canvas.renderAll();
+    renderTimeline();
+    updatePlayhead();
+    updateInspector();
+    updateGridOverlay();
+
+    toast(`Проект "${projectName}" создан`, 'success');
+}
+
+function openProjectSettings() {
+    document.getElementById('ps-name').value = projectName;
+    document.getElementById('ps-width').value = canvas.getWidth();
+    document.getElementById('ps-height').value = canvas.getHeight();
+    document.getElementById('ps-bg-color').value = bgColor || '#ffffff';
+    setBgModeInModal('modal-project-settings', bgMode);
+
+    const drop = document.getElementById('ps-bg-drop');
+    if (bgImageObj && bgImageDataURL) {
+        drop.classList.add('has-file');
+        drop.textContent = '✓ Текущее фоновое изображение (кликните чтобы заменить)';
+        drop._pendingFile = null;
+    } else {
+        drop._clearPendingFile();
+    }
+
+    openModal('modal-project-settings');
+}
+
+
+======================================================================
+FILE: ./js/project/load.js
+======================================================================
+
+ 
+// ================= ЗАГРУЗКА =================
+
+async function loadProject(file) {
+    try {
+        toast('Загрузка проекта...', 'info');
+        const zip = await JSZip.loadAsync(file);
+
+        const projectFile = zip.file('project.json');
+        if (!projectFile) {
+            toast('Файл project.json не найден в архиве', 'error', 4000);
+            return;
+        }
+        const projectData = JSON.parse(await projectFile.async('string'));
+
+        canvas.clear();
+        canvas.backgroundColor = '#ffffff';
+        objectCounter = 0;
+        selectedKeyframe = null;
+        currentTime = 0;
+        bgImageObj = null;
+        bgImageDataURL = null;
+
+        projectName = projectData.projectName || 'Без названия';
+        document.getElementById('project-name').textContent = projectName;
+
+        DURATION = projectData.duration || 5;
+        document.getElementById('inp-duration').value = DURATION;
+
+        TIME_STEP = projectData.timeStep || 0.05;
+        document.getElementById('inp-step').value = TIME_STEP.toFixed(2);
+
+        if (projectData.gridSize) {
+            gridSize = projectData.gridSize;
+            document.getElementById('inp-grid-size').value = gridSize;
+        }
+
+        if (projectData.canvasWidth && projectData.canvasHeight) {
+            canvas.setWidth(projectData.canvasWidth);
+            canvas.setHeight(projectData.canvasHeight);
+        }
+
+        bgMode = projectData.bgMode || 'color';
+        bgColor = projectData.bgColor || '#ffffff';
+
+        if (bgMode === 'color') {
+            canvas.backgroundColor = bgColor;
+        } else if (bgMode === 'transparent') {
+            canvas.backgroundColor = null;
+        } else if (bgMode === 'image' && projectData.bgAssetRef) {
+            const bgFile = zip.file(projectData.bgAssetRef);
+            if (bgFile) {
+                const bgBlob = await bgFile.async('blob');
+                const bgUrl = URL.createObjectURL(bgBlob);
+                await new Promise((resolve) => {
+                    fabric.Image.fromURL(bgUrl, (img) => {
+                        const scaleX = canvas.getWidth() / img.width;
+                        const scaleY = canvas.getHeight() / img.height;
+                        const scale = Math.max(scaleX, scaleY);
+                        img.set({
+                            left: 0, top: 0,
+                            scaleX: scale, scaleY: scale,
+                            selectable: false, evented: false,
+                            hasControls: false, hasBorders: false,
+                            lockMovementX: true, lockMovementY: true,
+                            lockScalingX: true, lockScalingY: true,
+                            lockRotation: true,
+                            isBackgroundImage: true
+                        });
+                        bgImageObj = img;
+                        canvas.add(img);
+                        canvas.sendToBack(img);
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            bgImageDataURL = reader.result;
+                            resolve();
+                        };
+                        reader.readAsDataURL(bgBlob);
+                    });
+                });
+            }
+        }
+
+        canvas.renderAll();
+
+        for (const objData of projectData.objects) {
+            if (objData.objType !== 'image') continue;
+
+            const assetFile = zip.file(objData.assetRef);
+            if (!assetFile) {
+                console.warn('Asset not found:', objData.assetRef);
+                continue;
+            }
+
+            const blob = await assetFile.async('blob');
+            const url = URL.createObjectURL(blob);
+
+            await new Promise((resolve) => {
+                fabric.Image.fromURL(url, (img) => {
+                    img.set({
+                        left: objData.left,
+                        top: objData.top,
+                        angle: objData.angle,
+                        scaleX: objData.scaleX,
+                        scaleY: objData.scaleY,
+                        opacity: objData.opacity ?? 1,
+                        visible: objData.visible !== undefined ? objData.visible : true
+                    });
+                    img.objId = objData.objId;
+                    img.objName = objData.objName;
+                    img.objColor = objData.objColor;
+                    img.objType = objData.objType;
+                    img.originalFileName = objData.originalFileName;
+                    img.keyframes = objData.keyframes || {};
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        img._sourceDataURL = reader.result;
+                        canvas.add(img);
+                        objectCounter++;
+                        canvas.renderAll();
+                        resolve();
+                    };
+                    reader.readAsDataURL(blob);
+                });
+            });
+        }
+
+        canvas.renderAll();
+        renderTimeline();
+        updatePlayhead();
+        updateInspector();
+        applyStateAtTime(currentTime);
+        updateGridOverlay();
+        toast(`Проект "${projectName}" загружен`, 'success');
+    } catch (err) {
+        console.error(err);
+        toast('Ошибка загрузки: ' + err.message, 'error', 4000);
+    }
+}
+
+
+======================================================================
+FILE: ./js/project/save.js
+======================================================================
+
+ 
+// ================= СОХРАНЕНИЕ =================
+
+async function saveProject() {
+    try {
+        const zip = new JSZip();
+        const assetsFolder = zip.folder('assets');
+        const objects = canvas.getObjects().filter(o => !o.isBackgroundImage);
+        const projectData = {
+            version: 2,
+            projectName: projectName,
+            duration: DURATION,
+            timeStep: TIME_STEP,
+            gridSize: gridSize,
+            bgMode: bgMode,
+            bgColor: bgColor,
+            canvasWidth: canvas.getWidth(),
+            canvasHeight: canvas.getHeight(),
+            objects: []
+        };
+
+        if (bgMode === 'image' && bgImageDataURL) {
+            const bgAssetName = `background_${Date.now()}.png`;
+            const bgBlob = dataURLtoBlob(bgImageDataURL);
+            assetsFolder.file(bgAssetName, bgBlob);
+            projectData.bgAssetRef = 'assets/' + bgAssetName;
+        }
+
+        for (let i = 0; i < objects.length; i++) {
+            const obj = objects[i];
+            if (obj.objType !== 'image') continue;
+
+            let dataURL = obj._sourceDataURL;
+            if (!dataURL) {
+                dataURL = obj.toDataURL({ format: 'png', multiplier: 1 });
+            }
+
+            let fileName = obj.originalFileName || `image_${i}.png`;
+            const baseName = fileName.replace(/\.[^/.]+$/, '');
+            const ext = fileName.split('.').pop() || 'png';
+            let assetName = `${baseName}_${obj.objId}.${ext}`;
+            if (assetName.length > 80) {
+                assetName = `img_${i}_${obj.objId.slice(-6)}.${ext}`;
+            }
+
+            const blob = dataURLtoBlob(dataURL);
+            assetsFolder.file(assetName, blob);
+
+            projectData.objects.push({
+                objId: obj.objId,
+                objName: obj.objName,
+                objColor: obj.objColor,
+                objType: obj.objType,
+                originalFileName: obj.originalFileName,
+                assetRef: 'assets/' + assetName,
+                left: obj.left,
+                top: obj.top,
+                angle: obj.angle,
+                scaleX: obj.scaleX,
+                scaleY: obj.scaleY,
+                opacity: obj.opacity,
+                visible: obj.visible,
+                keyframes: obj.keyframes || {}
+            });
+        }
+
+        zip.file('project.json', JSON.stringify(projectData, null, 2));
+
+        const content = await zip.generateAsync({ type: 'blob' });
+        const safeName = projectName.replace(/[^a-zA-Z0-9а-яА-Я_-]/g, '_');
+        saveAs(content, `${safeName}_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.zip`);
+        toast(`Проект "${projectName}" сохранён`, 'success');
+    } catch (err) {
+        console.error(err);
+        toast('Ошибка сохранения: ' + err.message, 'error', 4000);
+    }
+}
