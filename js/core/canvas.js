@@ -31,26 +31,29 @@ function initCanvas() {
     canvasContainer.appendChild(gridOverlay);
 
     // ===== ОБРАБОТЧИКИ ДЛЯ ПАНОРАМИРОВАНИЯ КАМЕРЫ (КОЛЕСИКО МЫШИ) =====
-    canvas.on('mouse:down', (e) => {
+    // Используем нативное событие mousedown на canvas element
+    const canvasElement = document.getElementById('c');
+    
+    canvasElement.addEventListener('mousedown', (e) => {
         // Если нажато среднее колесико мыши (button === 1)
-        if (e.e.button === 1) {
+        if (e.button === 1) {
             isPanning = true;
-            lastPanX = e.e.clientX;
-            lastPanY = e.e.clientY;
+            lastPanX = e.clientX;
+            lastPanY = e.clientY;
             canvas.defaultCursor = 'grabbing';
             canvas.selection = false; // Отключаем выделение при панорамировании
-            e.e.preventDefault();
+            e.preventDefault();
         }
     });
 
-    canvas.on('mouse:move', (e) => {
+    canvasElement.addEventListener('mousemove', (e) => {
         if (!isPanning) return;
         
-        const deltaX = e.e.clientX - lastPanX;
-        const deltaY = e.e.clientY - lastPanY;
+        const deltaX = e.clientX - lastPanX;
+        const deltaY = e.clientY - lastPanY;
         
-        lastPanX = e.e.clientX;
-        lastPanY = e.e.clientY;
+        lastPanX = e.clientX;
+        lastPanY = e.clientY;
         
         // Используем viewportTransform для панорамирования камеры
         const zoom = canvas.getZoom();
@@ -64,8 +67,8 @@ function initCanvas() {
         updateGridOverlay();
     });
 
-    canvas.on('mouse:up', (e) => {
-        if (e.e.button === 1) {
+    canvasElement.addEventListener('mouseup', (e) => {
+        if (e.button === 1) {
             isPanning = false;
             canvas.defaultCursor = 'default';
             canvas.selection = true; // Включаем выделение обратно
@@ -73,7 +76,7 @@ function initCanvas() {
     });
 
     // Также останавливаем панорамирование если мышь ушла с канваса
-    canvas.on('mouse:out', () => {
+    canvasElement.addEventListener('mouseleave', () => {
         if (isPanning) {
             isPanning = false;
             canvas.defaultCursor = 'default';
