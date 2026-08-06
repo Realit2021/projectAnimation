@@ -3,6 +3,16 @@
     width: 260px; min-width: 180px; max-width: 500px;
     background: var(--bg-panel); display: flex; flex-direction: column;
     flex-shrink: 0; overflow-y: auto;
+    transition: width 0.15s, opacity 0.15s;
+}
+#inspector.hidden {
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0;
+    border: none;
 }
 #inspector-header {
     padding: 10px 12px; background: var(--bg-lighter);
