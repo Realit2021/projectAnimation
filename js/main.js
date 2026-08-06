@@ -18,6 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-go-start').onclick = goToStart;
     document.getElementById('btn-go-end').onclick = goToEnd;
 
+    // ===== 3b. КНОПКИ МАСШТАБА =====
+    document.getElementById('btn-zoom-in').onclick = zoomIn;
+    document.getElementById('btn-zoom-out').onclick = zoomOut;
+    document.getElementById('btn-zoom-reset').onclick = zoomReset;
+
     // ===== 4. СЕТКА И МАГНИТ =====
     document.getElementById('btn-grid').onclick = () => {
         gridEnabled = !gridEnabled;

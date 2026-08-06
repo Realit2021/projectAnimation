@@ -3,6 +3,9 @@
 
 let canvas;
 let gridOverlay;
+let currentZoom = 1; // Текущий масштаб (1 = 100%)
+const MIN_ZOOM = 0.25;
+const MAX_ZOOM = 3;
 
 function initCanvas() {
     canvas = new fabric.Canvas('c', {
@@ -14,6 +17,43 @@ function initCanvas() {
     gridOverlay = document.createElement('div');
     gridOverlay.id = 'grid-overlay';
     canvasContainer.appendChild(gridOverlay);
+}
+
+// Функция установки масштаба
+function setZoom(zoom) {
+    currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
+    
+    const workspace = document.getElementById('workspace');
+    const canvasEl = document.getElementById('c');
+    
+    canvasEl.style.transform = `scale(${currentZoom})`;
+    canvasEl.style.transformOrigin = 'center center';
+    
+    // Обновляем текст кнопки сброса
+    const resetBtn = document.getElementById('btn-zoom-reset');
+    if (resetBtn) {
+        resetBtn.textContent = Math.round(currentZoom * 100) + '%';
+    }
+    
+    // Пересчитываем offset для корректной работы мыши
+    setTimeout(() => {
+        canvas.calcOffset();
+    }, 10);
+}
+
+// Увеличить масштаб
+function zoomIn() {
+    setZoom(currentZoom * 1.25);
+}
+
+// Уменьшить масштаб
+function zoomOut() {
+    setZoom(currentZoom / 1.25);
+}
+
+// Сбросить масштаб
+function zoomReset() {
+    setZoom(1);
 }
 
 function updateGridOverlay() {
