@@ -7,6 +7,11 @@ let currentZoom = 1; // Текущий масштаб (1 = 100%)
 const MIN_ZOOM = 0.25;
 const MAX_ZOOM = 3;
 
+// Переменные для панорамирования камеры
+let isPanning = false;
+let lastPanX = 0;
+let lastPanY = 0;
+
 function initCanvas() {
     canvas = new fabric.Canvas('c', {
         backgroundColor: '#ffffff',
@@ -24,6 +29,54 @@ function initCanvas() {
     gridOverlay = document.createElement('div');
     gridOverlay.id = 'grid-overlay';
     canvasContainer.appendChild(gridOverlay);
+
+    // ===== ОБРАБОТЧИКИ ДЛЯ ПАНОРАМИРОВАНИЯ КАМЕРЫ (КОЛЕСИКО МЫШИ) =====
+    canvas.on('mouse:down', (e) => {
+        // Если нажато среднее колесико мыши (button === 1)
+        if (e.e.button === 1) {
+            isPanning = true;
+            lastPanX = e.e.clientX;
+            lastPanY = e.e.clientY;
+            canvas.defaultCursor = 'grabbing';
+            e.e.preventDefault();
+        }
+    });
+
+    canvas.on('mouse:move', (e) => {
+        if (!isPanning) return;
+        
+        const deltaX = e.e.clientX - lastPanX;
+        const deltaY = e.e.clientY - lastPanY;
+        
+        lastPanX = e.e.clientX;
+        lastPanY = e.e.clientY;
+        
+        // Перемещаем все объекты в противоположном направлении
+        canvas.getObjects().forEach(obj => {
+            obj.set({
+                left: obj.left + deltaX / currentZoom,
+                top: obj.top + deltaY / currentZoom
+            });
+            obj.setCoords();
+        });
+        
+        canvas.renderAll();
+    });
+
+    canvas.on('mouse:up', (e) => {
+        if (e.e.button === 1) {
+            isPanning = false;
+            canvas.defaultCursor = 'default';
+        }
+    });
+
+    // Также останавливаем панорамирование если мышь ушла с канваса
+    canvas.on('mouse:out', () => {
+        if (isPanning) {
+            isPanning = false;
+            canvas.defaultCursor = 'default';
+        }
+    });
 }
 
 // Функция установки масштаба
