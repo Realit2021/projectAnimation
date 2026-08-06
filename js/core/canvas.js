@@ -30,13 +30,12 @@ function initCanvas() {
     gridOverlay.id = 'grid-overlay';
     canvasContainer.appendChild(gridOverlay);
 
-    // ===== ОБРАБОТЧИКИ ДЛЯ ПАНОРАМИРОВАНИЯ КАМЕРЫ (КОЛЕСИКО МЫШИ) =====
-    // Используем нативное событие mousedown на canvas element
+    // ===== ОБРАБОТЧИКИ ДЛЯ ПАНОРАМИРОВАНИЯ КАМЕРЫ (CTRL + ЛКМ) =====
     const canvasElement = document.getElementById('c');
     
     canvasElement.addEventListener('mousedown', (e) => {
-        // Если нажато среднее колесико мыши (button === 1)
-        if (e.button === 1) {
+        // Если зажат Ctrl и нажата левая кнопка мыши
+        if (e.ctrlKey && e.button === 0) {
             isPanning = true;
             lastPanX = e.clientX;
             lastPanY = e.clientY;
@@ -67,12 +66,10 @@ function initCanvas() {
         updateGridOverlay();
     });
 
-    canvasElement.addEventListener('mouseup', (e) => {
-        if (e.button === 1) {
-            isPanning = false;
-            canvas.defaultCursor = 'default';
-            canvas.selection = true; // Включаем выделение обратно
-        }
+    canvasElement.addEventListener('mouseup', () => {
+        isPanning = false;
+        canvas.defaultCursor = 'default';
+        canvas.selection = true; // Включаем выделение обратно
     });
 
     // Также останавливаем панорамирование если мышь ушла с канваса
