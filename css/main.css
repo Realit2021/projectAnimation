@@ -131,6 +131,15 @@ button:disabled:hover {
     font-size: 11px;
 }
 
+/* Кнопки масштаба */
+#btn-zoom-out, #btn-zoom-reset, #btn-zoom-in {
+    min-width: 40px;
+}
+#btn-zoom-reset {
+    font-weight: bold;
+    font-size: 11px;
+}
+
 #kf-status {
     font-size: 11px;
     color: var(--text-dim);
